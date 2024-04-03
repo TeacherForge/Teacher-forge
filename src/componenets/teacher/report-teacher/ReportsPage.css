@@ -1,0 +1,40 @@
+.reports-page {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: row;
+    margin: 0;
+    width: 100%;
+    min-height: 100vh;
+    background-image: url('/src/constant/image/background_teacher.svg');
+    background-size: cover; 
+    background-attachment: fixed;
+    background-position: center center;
+    background-repeat: no-repeat;
+    overflow-x: hidden;
+}
+
+.header {
+    margin-right: auto;
+    margin-left: 5rem; 
+    overflow: hidden;
+    width: 100%;
+}
+.header-first{
+    font-size: 66px;
+}
+.header-second{
+    font-size: 20px;
+}
+
+.form-container {
+    margin-top: 2rem;
+    margin-left: auto;
+    margin-right: 5rem; 
+    box-shadow: 0 4px 8px #C1C1C1;
+    border-radius: 30px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 500px;
+    background: #fff;
+    padding: 1rem;
+}

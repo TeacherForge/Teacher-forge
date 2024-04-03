@@ -1,0 +1,5 @@
+.vertical-line {
+    border-left: 1px solid #e8e8e8; /* цвет и толщина линии */
+    height: 100px; /* высота линии */
+    margin: 0 10px; /* отступы слева и справа от линии */
+}

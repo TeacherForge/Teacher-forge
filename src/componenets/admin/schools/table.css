@@ -1,0 +1,15 @@
+.ant-select-selector {
+    border-color: #ff0000; /* Замените #ff0000 на цвет, который вы хотите использовать */
+}
+.ant-tabs-nav-wrap .ant-tabs-nav-list .ant-tabs-nav .ant-tabs-tab  {
+    background-color: #1885C3;
+}
+/* Показать элемент управления, даже если все вкладки помещаются */
+.ant-tabs-nav-operations-hidden {
+    display: block !important;
+}
+
+/* Скрыть элемент управления, даже если не все вкладки помещаются */
+.ant-tabs-nav-operations {
+    display: none !important;
+}

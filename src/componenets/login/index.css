@@ -1,0 +1,7 @@
+.container {
+    display: flex;
+    justify-content: center; /* Выравнивание по горизонтали */
+    align-items: center; /* Выравнивание по вертикали */
+    margin: 20px;
+}
+

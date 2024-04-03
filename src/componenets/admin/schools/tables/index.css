@@ -1,0 +1,9 @@
+.ant-table-row-expand-icon-cell {
+    display: none;
+}
+.full-name-column {
+    width: 230px; /* Установка желаемой ширины для столбца "Full Name" */
+}
+.position-column {
+    width: 300px;
+}
