@@ -14,7 +14,7 @@ const ReportsPagePsychologist = () => {
   const [selectedReport, setSelectedReport] = useState()
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalRecords, setTotalRecords] = useState(498); 
+  const [totalRecords, setTotalRecords] = useState(); 
   const pageSize = 30;
   const accessToken = localStorage.getItem('accessToken');
   const [sortField, setSortField] = useState('createdTime');
@@ -65,12 +65,11 @@ const ReportsPagePsychologist = () => {
           pageSize: pageSize,
           search: searchText,
           status: selectedStatus,
-          pageSize: pageSize,
           sort: sortParam
         },
       });
       setReports(response.data.map((report, index) => ({ ...report, key: index })));
-      //setTotalRecords(response.headers.totalRecords);
+      setTotalRecords(parseInt(response.headers['x-total-count'], 10));
     } catch (error) {
       notification.error({
         message: 'Ошибка при получении отчетов',
@@ -186,7 +185,6 @@ const ReportsPagePsychologist = () => {
         pageSize={pageSize}
         total={totalRecords}
         showSizeChanger={false}
-        PaginationAlign='end'
         size='small'
         rootClassName='pagination-container'
       />

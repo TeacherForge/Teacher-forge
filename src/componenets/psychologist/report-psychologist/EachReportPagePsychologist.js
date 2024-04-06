@@ -62,7 +62,7 @@ const EachReportPagePsychologist = () => {
     }
 
     try {
-      const response = await axios.put(`${Base_URL}/reports/${id}/finish-work`, {}, {
+      const response = await axios.put(`${Base_URL}/reports/${id}`, {}, {
         headers: { Authorization: `Bearer ${accessToken}` },
         action: 'FINISHED'
       });
