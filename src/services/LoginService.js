@@ -24,9 +24,7 @@ export const loginOTP = async (data,setAccessToken) => {
             if (response.data) {
                 localStorage.setItem('role', response.data.roles[0]);
                 localStorage.setItem('accessToken', response.data.token);
-                localStorage.setItem('username', response.data.username);
-                localStorage.setItem('middlename', response.data.middlename);
-                localStorage.setItem('lastname', response.data.lastname);
+                localStorage.setItem('fullName', response.data.fullName);
                 localStorage.setItem('id', response.data.id);
 
                 setAccessToken(true);

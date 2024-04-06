@@ -17,8 +17,14 @@ const ReportsPage = () => {
   const [selectedViolationTypeId, setSelectedViolationTypeId] = useState(null);
   const [students, setStudents] = useState([]);
   const [searchText, setSearchText] = useState('');
-  const [fileList, setFileList] = useState([]);
   const accessToken = localStorage.getItem('accessToken');
+  const [isOtherSelected, setIsOtherSelected] = useState(false);
+
+
+  const handleViolationTypeChange = (value) => {
+    setSelectedViolationTypeId(value);
+    setIsOtherSelected(value === "cbd6522f-a250-4847-914e-e37773493204");
+  };
   
   let documentIds = [];
   const handleUpload = async (file) => {
@@ -85,7 +91,6 @@ const ReportsPage = () => {
         await SendReport(formData);
         notification.success({
           message: 'Report submitted successfully',
-          description: 'Your report has been submitted.',
         });
 
     } catch (error) {
@@ -127,7 +132,7 @@ const ReportsPage = () => {
         </Select>
       </Form.Item>
       <Form.Item name="reportTypeId" label="Type of violation" rules={[{ required: true }]}>
-        <Select placeholder="Select a violation type" onChange={(value) => setSelectedViolationTypeId(value)}>
+        <Select placeholder="Select a violation type" onChange={(value) => handleViolationTypeChange(value)}>
           {reportTypes.map((type) => (
             <Option key={type.id} value={type.id}>
               <Tooltip title={type.description}>
@@ -137,11 +142,23 @@ const ReportsPage = () => {
           ))}
         </Select>
       </Form.Item>
-      <Form.Item name="violationDate" label="Date of violation" rules={[{ required: true }]}>
-        <DatePicker />
-      </Form.Item>
-      <Form.Item name="violationTime" label="Time of violation" rules={[{ required: true }]}>
-        <TimePicker />
+      <Form.Item label="Date and Time of Violation" style={{ marginBottom: 0 }}>
+        <Input.Group compact>
+          <Form.Item
+            name="violationDate"
+            noStyle
+            rules={[{ required: true, message: 'Date of violation is required' }]}
+          >
+            <DatePicker style={{ width: '50%' }} />
+          </Form.Item>
+          <Form.Item
+            name="violationTime"
+            noStyle
+            rules={[{ required: true, message: 'Time of violation is required' }]}
+          >
+            <TimePicker format={'HH:mm'} style={{ width: '50%' }} />
+          </Form.Item>
+        </Input.Group>
       </Form.Item>
       <Form.Item name="lesson" label="Lesson">
         <Input />
@@ -149,11 +166,18 @@ const ReportsPage = () => {
       <Form.Item name="place" label="Place" rules={[{ required: true }]}>
         <Input />
       </Form.Item>
-      <Form.Item name="comments" label="Comment">
-        <TextArea />
-      </Form.Item>
-
-
+      <Form.Item
+  name="comments"
+  label="Comment"
+  rules={[
+    { 
+      required: isOtherSelected,
+      message: 'Comments are required when "Other" is selected.',
+    },
+  ]}
+>
+  <TextArea />
+</Form.Item>
 
       <Form.Item
         name="attachment"
@@ -170,9 +194,6 @@ const ReportsPage = () => {
           <Button icon={<UploadOutlined />}>Click to upload</Button>
         </Upload>
       </Form.Item>
-
-
-
 
       <Form.Item>
         <Button type="primary" htmlType="submit" style={{margin:"5px"}}>

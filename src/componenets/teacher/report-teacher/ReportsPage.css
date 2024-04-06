@@ -14,16 +14,17 @@
 }
 
 .header {
-    margin-right: auto;
-    margin-left: 5rem; 
     overflow: hidden;
     width: 100%;
+
 }
 .header-first{
+    margin: 2rem 0 2rem 5rem;
     font-size: 66px;
 }
 .header-second{
     font-size: 20px;
+    margin: 0 0 0 5rem;
 }
 
 .form-container {

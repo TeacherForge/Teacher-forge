@@ -11,9 +11,6 @@ export const SendReport = async (reportData) => {
               Authorization: `Bearer ${accessToken}`,
             },
           });
-        notification.success({
-            message: 'You have successfully reported'
-        });
         return response.data;
     } catch (error) {
         notification.error({

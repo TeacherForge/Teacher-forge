@@ -8,6 +8,7 @@ import ReportsPage from "./componenets/teacher/report-teacher/ReportsPage";
 import EachStudentPage from "./componenets/admin/schools/each/EachStudentPage";
 import AppealsPageTeacher from "./componenets/teacher/appeals-teacher/AppealsPageTeacher";
 import ReportsPagePsychologist from './componenets/psychologist/report-psychologist/ReportsPagePsychologist';
+import EachReportPagePsychologist from './componenets/psychologist/report-psychologist/EachReportPagePsychologist'
 import AppealsPagePsychologist from "./componenets/psychologist/appeals-psychologist/AppealsPagePsychologist";
 import EachSchoolPage from "./componenets/admin/schools/EachSchoolPage";
 import TestPageTeacher from "./componenets/teacher/test-teacher/TestPageTeacher"
@@ -40,10 +41,10 @@ function App() {
                         <Route path='/schools/student/:studentId' element={<ComponentWithMargin><EachStudentPage /></ComponentWithMargin>} />
                         <Route path='/report-teacher' element={<ReportsPage />} />
                         <Route path='/report-psychologist' element={<ReportsPagePsychologist />}/>
-                        <Route path='/report-psychologist/:id' element={<ReportsPagePsychologist />} />
+                        <Route path='/report/:id' element={<EachReportPagePsychologist />} />
                         <Route path='/appeals-psychologist' element={<AppealsPagePsychologist />} />
                         <Route path='/appeals-teacher' element={<AppealsPageTeacher />} />
-                        <Route path='/test-teacher' element={<TestPageTeacher />} />
+                        {/*<Route path='/test-teacher' element={<TestPageTeacher />} />
                         <Route path='/test-psychologist' element={<TestPagePsychologist />} />
                         {/* Другие маршруты */}
                     </Routes>

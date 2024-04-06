@@ -17,9 +17,7 @@ const Navbar = () => {
         }
     };
     const role = localStorage.getItem('role');
-    const username = localStorage.getItem('username');
-    const middlename = localStorage.getItem('middlename');
-    const lastname = localStorage.getItem('lastname');
+    const fullName = localStorage.getItem('fullName');
 
     const navigate = useNavigate();
     const { setAccessToken, setRole } = useUserContext();
@@ -96,7 +94,7 @@ const Navbar = () => {
             <div style={{display: 'flex', justifyContent: 'center', alignItems:'center'}}>
                 <Row gutter={16}>
                     <Col>
-                        <Typography.Text style={{color:'white', textAlign:'center', fontSize:'20px'}}>{username} {middlename} {lastname}</Typography.Text>
+                        <Typography.Text style={{color:'white', textAlign:'center', fontSize:'20px'}}>{fullName}</Typography.Text>
                     </Col>
                     <Col>
                         <Button style={{borderRadius:'50px'}} onClick={() => {localStorage.removeItem('accessToken');localStorage.removeItem('role');setAccessToken(false);setRole(false); navigate('/login')}}><b>Log Out</b></Button>

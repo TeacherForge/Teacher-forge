@@ -62,29 +62,6 @@ const jsonStatus = [
     }
 ];
 
-const info = [
-    {
-        key: '1',
-        name: 'John Brown',
-        address: 32,
-        status: 'New York No. 1 Lake Park',
-        type: 'New York No. 1 Lake Park',
-    },
-    {
-        key: '2',
-        name: 'Jim Green',
-        address: 42,
-        status: 'London No. 1 Lake Park',
-        type: 'London No. 1 Lake Park',
-    },
-    {
-        key: '3',
-        name: 'Joe Black',
-        address: 32,
-        status: 'Sidney No. 1 Lake Park',
-        type: 'Sidney No. 1 Lake Park',
-    },
-];
 
 const columns = [
     {

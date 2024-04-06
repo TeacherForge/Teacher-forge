@@ -29,6 +29,7 @@
 }
 
 .table-container{
+min-width: 1000px;
 background-color: white;
 padding: 20px;
 border-radius: 10px;
@@ -56,4 +57,12 @@ flex-direction: row;
 .disciplinary-report-table .ant-table-tbody > tr > td:last-child {
   display: flex;
   justify-content: center;
+
+}
+.pagination-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-right: 0;
+  width: 100%;
 }

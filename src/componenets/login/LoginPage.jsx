@@ -109,8 +109,7 @@ const LoginPage = () => {
                                             </Form.Item>
 
                                             <Form.Item>
-                                                <Button type='primary' htmlType='submit'
-                                                        style={{width: '100%', borderRadius: '25px'}}>
+                                                <Button htmlType='submit' style={{width: '100%', borderRadius: '25px', backgroundColor:'#1885C2', color:'white'}}>
                                                     Log in
                                                 </Button>
                                             </Form.Item>
@@ -121,15 +120,14 @@ const LoginPage = () => {
                                         <>
                                             <Form.Item name={'code'} label={'Write code:'}>
                                                 <Space wrap>
-                                                    <Input size='large' />
+                                                    <Input maxLength={6} />
                                                 </Space>
                                             </Form.Item>
                                             <Form.Item>
                                                 <Typography.Text>Send again?</Typography.Text>
                                             </Form.Item>
                                             <Form.Item>
-                                                <Button type='primary' htmlType='submit'
-                                                        style={{width: '100%', borderRadius: '25px'}}>
+                                                <Button htmlType='submit'style={{width: '100%', borderRadius: '25px', backgroundColor:'#1885C2', color:'white'}}>
                                                     Check
                                                 </Button>
                                             </Form.Item>
