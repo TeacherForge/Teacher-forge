@@ -10,10 +10,10 @@ import AppealsPageTeacher from "./componenets/teacher/appeals-teacher/AppealsPag
 import ReportsPagePsychologist from './componenets/psychologist/report-psychologist/ReportsPagePsychologist';
 import EachReportPagePsychologist from './componenets/psychologist/report-psychologist/EachReportPagePsychologist'
 import AppealsPagePsychologist from "./componenets/psychologist/appeals-psychologist/AppealsPagePsychologist";
-import EachSchoolPage from "./componenets/admin/schools/EachSchoolPage";
+import EachSchoolPage from "./componenets/admin/schools/each/EachSchoolPage";
 import TestPageTeacher from "./componenets/teacher/test-teacher/TestPageTeacher"
 import TestPagePsychologist from "./componenets/psychologist/test-psychologist/TestPagePsychologist"
-
+import EachStudentPagePsychologist from './componenets/psychologist/students/EachStudentPagePsychologist'
 
 function App() {
     const [accessToken, setAccessToken] = useState(false);
@@ -41,11 +41,11 @@ function App() {
                         <Route path='/schools/student/:studentId' element={<ComponentWithMargin><EachStudentPage /></ComponentWithMargin>} />
                         <Route path='/report-teacher' element={<ReportsPage />} />
                         <Route path='/report-psychologist' element={<ReportsPagePsychologist />}/>
+                        <Route path='/psychologist/students/:studentId' element={<ComponentWithMargin><EachStudentPagePsychologist /></ComponentWithMargin>} />
                         <Route path='/report/:id' element={<EachReportPagePsychologist />} />
                         <Route path='/appeals-psychologist' element={<AppealsPagePsychologist />} />
                         <Route path='/appeals-teacher' element={<AppealsPageTeacher />} />
                         {/*<Route path='/test-teacher' element={<TestPageTeacher />} />
-                        <Route path='/test-psychologist' element={<TestPagePsychologist />} />
                         {/* Другие маршруты */}
                     </Routes>
                 </Router>

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Table, Button, Row, Col, notification} from 'antd';
 import './index.css';
 import TeacherService from "../../../../services/TeacherService";
@@ -22,28 +22,7 @@ const StudentTable = () => {
         });
     }
 
-    const dataSource = [
-        {
-            id: '1',
-            name: 'John',
-            middleName: 'Brown',
-            surname: 'Jrown',
-            classRoom: '-',
-            email: 32,
-            phoneNumber: 'New York No. 1 Lake Park',
-            birthDate: '14',
-        },
-        {
-            id: '2',
-            name: 'John',
-            middleName: 'Brown',
-            surname: 'Jrown',
-            classRoom: '-',
-            email: 32,
-            phoneNumber: 'New York No. 1 Lake Park',
-            birthDate: '14',
-        },
-    ];
+    
 
     const columns = [
         {
@@ -102,13 +81,13 @@ const StudentTable = () => {
         },
     ];
 
-    // useEffect(() => {
-    //     getTeachersInfo();
-    // },[]);
+     useEffect(() => {
+         getTeachersInfo();
+    },[]);
 
     const getTeachersInfo = async () => {
-        await StudentService.getStudents().then((res) => {
-            const updatedDataSource = res.map(item => ({
+        await StudentService.getStudents(id).then((res) => {
+            const updatedDataSource = res.data.map(item => ({
                 ...item,
             }));
             setData(updatedDataSource);
@@ -117,9 +96,7 @@ const StudentTable = () => {
 
     return (
         <Table
-            dataSource={dataSource}
-            //для бэка
-            // dataSource={data}
+            dataSource={data}
             columns={columns}
         />
     );

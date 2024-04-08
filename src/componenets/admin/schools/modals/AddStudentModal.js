@@ -46,7 +46,7 @@ const AddStudentModal = ({isOpen,onClose}) => {
                         <Form.Item>
                             <input
                                 type="file"
-                                accept=".pdf,.doc,.docx"
+                                accept=".pdf,.doc,.docx,.png,.jpg"
                             />
                         </Form.Item>
                     </Form>

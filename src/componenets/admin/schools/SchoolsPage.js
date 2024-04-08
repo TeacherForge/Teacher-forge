@@ -68,29 +68,25 @@ const columns = [
         title: 'Name of school',
         dataIndex: 'name',
         key: 'name',
-        // render: (text, record) => <Link to={`/schools/${record?.id}`}>{text}</Link>,
-        render: (text, record) => <Link to={`/schools/${record?.key}`}>{text}</Link>,
+        render: (text, record) => <Link to={`/schools/${record?.id}`}>{text}</Link>,
     },
     {
         title: 'Location',
         dataIndex: 'address',
         key: 'address',
-        // render: (text, record) => <Link to={`/schools/${record?.id}`}>{text}</Link>,
-        render: (text, record) => <Link to={`/schools/${record?.key}`}>{text}</Link>,
+        render: (text, record) => <Link to={`/schools/${record?.id}`}>{text}</Link>,
     },
     {
         title: 'Status',
         dataIndex: 'status',
         key: 'status',
-        // render: (text, record) => <Link to={`/schools/${record?.id}`}>{text}</Link>,
-        render: (text, record) => <Link to={`/schools/${record?.key}`}>{text}</Link>,
+        render: (text, record) => <Link to={`/schools/${record?.id}`}>{text}</Link>,
     },
     {
         title: 'Type of school',
         dataIndex: 'type',
         key: 'type',
-        // render: (text, record) => <Link to={`/schools/${record?.id}`}>{text}</Link>,
-        render: (text, record) => <Link to={`/schools/${record?.key}`}>{text}</Link>,
+        render: (text, record) => <Link to={`/schools/${record?.id}`}>{text}</Link>,
     }
 ];
 
@@ -102,13 +98,14 @@ const SchoolsPage = () => {
 
     const [open, setOpen] = useState(false);
 
-    // useEffect(() => {
-    //     listSchools();
-    // },[])
+    useEffect(() => {
+       listSchools();
+    },[])
 
     const listSchools = async () => {
         await SchoolsService.getSchools().then((res) => {
-            setData(res);
+            console.log(res.data);
+            setData(res.data);
         });
     }
 
@@ -188,8 +185,6 @@ const SchoolsPage = () => {
                         <Table
                             columns={columns}
                             dataSource={data}
-                            //для бэка
-                            // dataSource={data}
                         />
                     </Card>
                 </Col>

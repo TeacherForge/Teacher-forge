@@ -24,13 +24,13 @@ const EachSchoolPage = () => {
         setKey(key);
     };
 
-    // useEffect(() => {
-    //     infoSchool();
-    // },[])
+    useEffect(() => {
+        infoSchool();
+    },[])
 
     const infoSchool = async () => {
         await SchoolsService.getSchoolsById(id).then((res) => {
-            setInfo(res);
+            setInfo(res.data);
         });
     }
 
@@ -38,26 +38,16 @@ const EachSchoolPage = () => {
         <>
             <Row gutter={16} style={{marginTop:'-70px'}}>
                 <Col xs={12}>
-                    <Typography.Title>Школа №32</Typography.Title>
-                    {/*для бэка*/}
-                    {/*<Typography.Title>{info?.name}</Typography.Title>*/}
+                    <Typography.Title>{info?.name}</Typography.Title>
                     <Row>
                         <Col xs={4}><Typography.Text style={{fontSize:'15px'}}><b>Address:</b></Typography.Text></Col>
-                        {/*для бэка*/}
-                        {/*<Col xs={20}><Typography.Text style={{fontSize:'15px'}}>{info?.region}</Typography.Text></Col>*/}
-                        <Col xs={20}><Typography.Text style={{fontSize:'15px'}}>VKO</Typography.Text></Col>
+                        <Col xs={20}><Typography.Text style={{fontSize:'15px'}}>{info?.region}</Typography.Text></Col>
                         <Col xs={4}><Typography.Text style={{fontSize:'15px'}}><b>Type:</b></Typography.Text></Col>
-                        {/*для бэка*/}
-                        {/*<Col xs={20}><Typography.Text style={{fontSize:'15px'}}>{info?.type}</Typography.Text></Col>*/}
-                        <Col xs={20}><Typography.Text style={{fontSize:'15px'}}>General</Typography.Text></Col>
+                        <Col xs={20}><Typography.Text style={{fontSize:'15px'}}>{info?.type}</Typography.Text></Col>
                         <Col xs={4}><Typography.Text style={{fontSize:'15px'}}><b>Status:</b></Typography.Text></Col>
-                        {/*для бэка*/}
-                        {/*<Col xs={20}><Typography.Text style={{fontSize:'15px'}}>{info?.status}</Typography.Text></Col>*/}
-                        <Col xs={20}><Typography.Text style={{fontSize:'15px'}}>State</Typography.Text></Col>
+                        <Col xs={20}><Typography.Text style={{fontSize:'15px'}}>{info?.status}</Typography.Text></Col>
                         <Col xs={4}><Typography.Text style={{fontSize:'15px'}}><b>Domain:</b></Typography.Text></Col>
-                        {/*для бэка*/}
-                        {/*<Col xs={20}><Typography.Text style={{fontSize:'15px'}}>{info?.domain}</Typography.Text></Col>*/}
-                        <Col xs={20}><Typography.Text style={{fontSize:'15px'}}>122</Typography.Text></Col>
+                        <Col xs={20}><Typography.Text style={{fontSize:'15px'}}>{info?.domain}</Typography.Text></Col>
                     </Row>
                 </Col>
                 <Col xs={12}>

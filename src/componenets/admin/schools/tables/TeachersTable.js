@@ -127,30 +127,6 @@ const TeachersTable = () => {
         });
     }
 
-    const dataSource = [
-        {
-            key: '1',
-            userName: 'John',
-            middleName: 'Brown',
-            lastName: 'Jrown',
-            position: '-',
-            email: 32,
-            phoneNumber: 'New York No. 1 Lake Park',
-            category: '14',
-            extra: extraform(),
-        },
-        {
-            key: '2',
-            userName: 'John',
-            middleName: 'Brown',
-            lastName: 'Jrown',
-            position: '-',
-            email: 32,
-            phoneNumber: 'New York No. 1 Lake Park',
-            category: '14',
-            extra: extraform(),
-        },
-    ];
 
     const columns = [
         {
@@ -229,14 +205,14 @@ const TeachersTable = () => {
             ),
         },
     ];
-    //
-    // useEffect(() => {
-    //   getTeachersInfo();
-    // },[]);
+    
+    useEffect(() => {
+    getTeachersInfo();
+    },[]);
 
     const getTeachersInfo = async () => {
-        await TeacherService.getTeachers().then((res) => {
-            const updatedDataSource = res.map(item => ({
+        await TeacherService.getTeachers(id).then((res) => {
+            const updatedDataSource = res.data.map(item => ({
                 ...item,
                 extra: extraform(),
             }));
@@ -246,9 +222,8 @@ const TeachersTable = () => {
 
     return (
         <Table
-            dataSource={dataSource}
-            //для бэка
-            // dataSource={data}
+
+            dataSource={data}
             columns={columns}
             expandedRowRender={expandedRowRender}
             expandedRowKeys={expandedRowKeys}

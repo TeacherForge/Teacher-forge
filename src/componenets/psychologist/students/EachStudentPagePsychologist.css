@@ -1,0 +1,8 @@
+.main-container{
+    background-image: url('../../../constant/image/background_psychologist_report.svg'); /* Убедитесь, что путь верный */
+    background-repeat: no-repeat; /* Предотвращает повторение изображения */
+    overflow-x: hidden;
+    margin-top: -50px;
+    margin-right: 80px;
+    margin-left: 80px;
+}
