@@ -5,32 +5,9 @@ import Search from "antd/es/input/Search";
 import '../schools/table.css'
 import {Link} from "react-router-dom";
 import AddSchoolModal from "./modals/AddSchoolModal";
-import AddStudentModal from "./modals/AddStudentModal";
-import AddTeacherModal from "./modals/AddTeacherModal";
 import SchoolsService from "../../../services/SchoolsService";
+import RegionService from "../../../services/RegionService";
 
-const jsonRegion = [
-    {
-        value: 'VKO',
-        name: 'VKO'
-    },
-    {
-        value: 'ZKO',
-        name: 'ZKO'
-    },
-    {
-        value: 'NKO',
-        name: 'NKO'
-    },
-    {
-        value: 'SKO',
-        name: 'SKO'
-    },
-    {
-        value: 'CKO',
-        name: 'CKO'
-    }
-]
 
 const jsonTypes = [
     {
@@ -95,16 +72,30 @@ const SchoolsPage = () => {
     const [isOpenTypes, setIsOpenTypes] = useState(true);
     const [isOpenStatus, setIsOpenStatus] = useState(true);
     const [data, setData] = useState([]);
+    const [dataRegion, setDataRegion] = useState([]);
+    const [regionId, setRegionId] = useState(null);
+    const [search, setSearch] = useState(null);
 
     const [open, setOpen] = useState(false);
 
+
+
+    useEffect(() => {
+        getRegions();
+    },[])
+
+    const getRegions = async () => {
+        await RegionService.getRegions().then((responce) => {
+            setDataRegion(responce.data);
+        });
+    }
+
     useEffect(() => {
        listSchools();
-    },[])
+    },[open])
 
     const listSchools = async () => {
         await SchoolsService.getSchools().then((res) => {
-            console.log(res.data);
             setData(res.data);
         });
     }
@@ -117,7 +108,7 @@ const SchoolsPage = () => {
         <>
             <Row gutter={16} style={{ marginTop: '80px', justifyContent: 'space-between' }}>
                 <Col>
-                    <Search style={{ width: '600px', borderRadius: '20px' }} placeholder={'Search'} />
+                    <Search style={{ width: '600px', borderRadius: '20px' }} placeholder={'Search'} onChange={(e) => setSearch(e.target.value)} />
                 </Col>
                 <Col>
                     <Button type={'primary'} style={{ borderRadius: '20px', width: '200px' }} onClick={() => setOpen(true)}>
@@ -138,9 +129,11 @@ const SchoolsPage = () => {
                                 {isOpen && (
                                     <Radio.Group>
                                         <Space direction="vertical" style={{marginLeft:'18px'}}>
-                                            {jsonRegion.map((item) => (
-                                                <Radio value={item.value}>{item.name}</Radio>
-                                            ))}
+                                            {
+                                                dataRegion.map((item) => (
+                                                    <Radio value={item.id} onChange={(e) => {setRegionId(e.target.value)}}>{item.name}</Radio>
+                                                ))
+                                            }
                                         </Space>
                                     </Radio.Group>
                                 )}

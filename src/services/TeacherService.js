@@ -9,7 +9,7 @@ class TeacherService{
         })
     };
 
-    updateTeachers(schoolId,userId,data){
+    updateTeachers(schoolId, userId, data){
         const accessToken = localStorage.getItem('accessToken');
         return axios.put(Base_URL + `/admin/schools/${schoolId}/users/${userId}`,data, {
             headers: { Authorization: `Bearer ${accessToken}`}
@@ -18,7 +18,7 @@ class TeacherService{
 
     createTeacher(data){
         const accessToken = localStorage.getItem('accessToken');
-        return axios.post(Base_URL + `/admin/teacher`,data, {
+        return axios.post(Base_URL + `/admin/users`,data, {
             headers: { Authorization: `Bearer ${accessToken}`}
         })
     }
@@ -26,7 +26,7 @@ class TeacherService{
 
     delUser(schoolId,userId){
         const accessToken = localStorage.getItem('accessToken');
-        return axios.get(Base_URL + `/admin/schools/${schoolId}/users/${userId}`, {
+        return axios.delete(Base_URL + `/admin/schools/${schoolId}/users/${userId}`, {
             headers: { Authorization: `Bearer ${accessToken}`}
         })
     };

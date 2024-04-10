@@ -1,12 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
-import {Button, Col, Form, Image, Input, notification, Row, Spin, Tabs, Typography} from 'antd';
-import {ContainerOutlined, FormOutlined} from '@ant-design/icons';
+import {Button, Col, DatePicker, Form, Image, Input, notification, Row, Spin, Tabs, Typography, Upload} from 'antd';
+import {ContainerOutlined, FormOutlined, LoadingOutlined, PlusOutlined, UploadOutlined} from '@ant-design/icons';
 import GuardianTab from './tabs-student/GuardianTab';
 import PsychologistTab from './tabs-student/PsychologistTab';
 import GeneralTab from './tabs-student/GeneralTab';
 import StudentService from "../../../../services/StudentService";
 import {useForm} from "antd/es/form/Form";
+import {uploadFile} from "../../../../services/UploadFileService";
+import {downloadFile}  from '../../../../services/DownLoadFileService'
+import AddGuardiansModal from "../modals/AddGuardiansModal";
 
 
 const EachStudentPage = () => {
@@ -15,10 +18,30 @@ const EachStudentPage = () => {
     const [formPsychology] = useForm();
 
     const [key, setKey] = useState(1);
+    const [photoUrl, setPhotoUrl] = useState(null);
     const [data, setData] = useState(null);
     const [isEdit, setIsEdit] = useState(false);
     const [loading, setLoading] = useState(false);
     const [isEditPsychologist, setIsEditPsychologist] = useState(false);
+    const [isEditGeneral, setIsEditGeneral] = useState(false);
+    const [general, setGeneral] = useState(null);
+    const [open, setOpen] = useState(false);
+
+
+    let documentIds = [];
+    const handleUpload = async (file) => {
+        try {
+            const uploadedFileId = await uploadFile(file);
+            documentIds.push(uploadedFileId);
+            return documentIds;
+        } catch (error) {
+            notification.error({
+                message: 'Upload Error',
+                description: 'There was an error uploading the file.',
+            });
+        }
+    };
+
 
     const onChange = (key) => {
         setKey(key);
@@ -29,7 +52,7 @@ const EachStudentPage = () => {
         if (studentId) {
             getStudentInfo();
         }
-    }, [studentId])
+    }, [studentId, open])
 
 
     const getStudentInfo = async () => {
@@ -37,6 +60,9 @@ const EachStudentPage = () => {
         await StudentService.getEachStudent(studentId).then((r) => {
             if (r.data) {
                 setData(r.data)
+                if (r.data.photoId) {
+                    fetchPhotoUrl(r.data.photoId);
+                }
             }
         }).catch(err => {
             notification.error({
@@ -46,6 +72,13 @@ const EachStudentPage = () => {
             setLoading(false);
         })
     }
+    
+    const fetchPhotoUrl = async (photoId) => {
+        const result = await downloadFile(photoId);
+        if (result) {
+            setPhotoUrl(result.downloadUrl); // Set the fetched photo URL in state
+        }
+    };
 
     useEffect(() => {
         if (isEdit && data) {
@@ -57,7 +90,7 @@ const EachStudentPage = () => {
     const handleSave = async () => {
         const values = form.getFieldsValue();
         setLoading(true);
-        await StudentService.updateStudents(studentId, values)
+        await StudentService.updateStudents(studentId, {...data,...values, photoId: documentIds[0]})
             .then((r) => {
                 getStudentInfo();
             })
@@ -80,10 +113,11 @@ const EachStudentPage = () => {
             additionalProperties: {
                 ...data.additionalProperties,
                 psychologyDetails: {
-                    values
+                    ...values
                 }
             }
         };
+
         setLoading(true);
         await StudentService.updateStudents(studentId, object)
             .then((r) => {
@@ -100,17 +134,70 @@ const EachStudentPage = () => {
         setIsEditPsychologist(false);
     }
 
+
+    const handleSaveGeneral = async () => {
+        const object = {
+            ...data,
+            additionalProperties: {
+                ...data.additionalProperties,
+                general:general
+            }
+        };
+        setLoading(true);
+        await StudentService.updateStudents(studentId, object)
+            .then((r) => {
+                getStudentInfo();
+            })
+            .catch((error) => {
+                notification.error({
+                    message: error.message
+                })
+            })
+            .finally((r) => {
+                setLoading(false);
+            })
+        setIsEditGeneral(false);
+    }
+
+    const uploadButton = (
+        <button style={{ border: 0, background: 'none' }} type="button">
+            {loading ? <LoadingOutlined /> : <PlusOutlined />}
+            <div style={{ marginTop: 8 }}>Upload</div>
+        </button>
+    );
+
+
+
     return (
         <div style={{marginTop: '-50px', marginRight: '80px', marginLeft: '80px'}}>
             <Spin spinning={loading}>
                 <Row gutter={[16, 16]}>
-                    <Col xs={8}>
-                        <Image
-                            src={'https://v1.spb.ru/gallery/foto-na-dokumenty/20150512/3,5_4,5.jpg'}
-                            style={{width: '250px', height: '320px'}}/>
+                    <Col xs={24} lg={8}>
+                        {
+                            isEdit
+                            ?
+                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center',height: '100%', marginLeft: '120px' }}>
+                                    <Upload
+                                        name="avatar"
+                                        listType="picture-card"
+                                        className="avatar-uploader"
+                                        showUploadList={false}
+                                        beforeUpload={(file) => {
+                                            handleUpload(file);
+                                            return false;
+                                        }}
+                                    >
+                                        {data?.photoId ? <img src={data?.photoId} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                                    </Upload>
+                                </div>
+                                :
+                                <Image
+                                src={photoUrl || 'fallback-image-url'} 
+                                style={{ width: '250px', height: '320px' }}/>
+                        }
                     </Col>
 
-                    <Col xs={12}>
+                    <Col xs={24} lg={12}>
                         <Typography.Title level={3}>
                             {data?.surname ?? ''}
                             &nbsp;
@@ -243,13 +330,9 @@ const EachStudentPage = () => {
                         />
                     </Col>
                     {
-                        key === 2
-                        &&
-                        data?.additionalProperties?.psychologyDetails
-                        &&
                         <Col xs={2}>
                             {
-                                isEditPsychologist
+                                (isEditPsychologist || isEditGeneral)
                                     ?
                                     <Button type={'primary'}
                                             style={{
@@ -258,7 +341,15 @@ const EachStudentPage = () => {
                                                 marginTop: '-5px',
                                                 float: 'right'
                                             }}
-                                            onClick={() => handleSavePsychologist()}>
+                                            onClick={() => {
+                                                if (key === 2) {
+                                                    handleSavePsychologist();
+
+                                                }
+                                                if (key === 3) {
+                                                    handleSaveGeneral();
+                                                }
+                                            }}>
                                         <Typography.Text style={{fontSize: '15px', color: 'white'}}>
                                             <b>
                                                 <ContainerOutlined/> &nbsp; Save
@@ -273,12 +364,32 @@ const EachStudentPage = () => {
                                                 marginTop: '-5px',
                                                 float: 'right'
                                             }}
-                                            onClick={() => setIsEditPsychologist(true)}>
-                                        <Typography.Text style={{fontSize: '15px', color: 'white'}}>
-                                            <b>
-                                                <FormOutlined/> &nbsp; Edit
-                                            </b>
-                                        </Typography.Text>
+                                            onClick={() => {
+                                                if (key === 1) {
+                                                    setOpen(true)
+                                                }
+                                                if (key === 2) {
+                                                    setIsEditPsychologist(true)
+                                                }
+                                                if (key === 3) {
+                                                    setIsEditGeneral(true);
+                                                }
+                                            }}>
+                                        {
+                                            key === 1
+                                            ?
+                                                <Typography.Text style={{fontSize: '15px', color: 'white'}}>
+                                                    <b>
+                                                        <FormOutlined/> &nbsp; Add
+                                                    </b>
+                                                </Typography.Text>
+                                                :
+                                                <Typography.Text style={{fontSize: '15px', color: 'white'}}>
+                                                    <b>
+                                                        <FormOutlined/> &nbsp; Edit
+                                                    </b>
+                                                </Typography.Text>
+                                        }
                                     </Button>
                             }
                         </Col>
@@ -290,7 +401,9 @@ const EachStudentPage = () => {
                         key === 1
                         &&
                         <>
-                            <GuardianTab guardians={data?.additionalProperties?.guardians}/>
+                            <GuardianTab
+                                institutions={data?.additionalProperties?.institutions}
+                            />
                         </>
                     }
                     {
@@ -308,11 +421,16 @@ const EachStudentPage = () => {
                         key === 3
                         &&
                         <>
-                            <GeneralTab general={data?.additionalProperties}/>
+                            <GeneralTab
+                                general={data?.additionalProperties?.general}
+                                isEditGeneral={isEditGeneral}
+                                setGeneral={setGeneral}
+                            />
                         </>
                     }
                 </div>
             </Spin>
+            <AddGuardiansModal data={data} onClose={() => setOpen(false)} isOpen={open} />
         </div>
     );
 };

@@ -1,25 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {Card} from "antd";
+import {Card, Form, Input} from "antd";
 
-const GeneralTab = ({general}) => {
-    const [data, setData] = useState(null);
+const GeneralTab = ({general,isEditGeneral,setGeneral}) => {
 
 
-    useEffect(() => {
-        if (general) {
-            setData(general?.general);
-        }
-    },[general])
-
-    if (!general) return(<Card style={{marginTop: '-20px', textAlign: 'center'}}>Нет данных</Card>);
 
     return (
-            general
-            &&
-            data!==null
-            &&
             <Card style={{marginTop:'-20px'}}>
-                {data}
+                {
+                    isEditGeneral
+                    ?
+                     <Input.TextArea defaultValue={general} onChange={(e) => setGeneral(e.target.value)}/>
+                        :
+                    general!==null && general
+                }
             </Card>
     );
 };

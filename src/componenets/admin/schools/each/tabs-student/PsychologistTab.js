@@ -1,7 +1,22 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Card, Col, Divider, Form, Input, Row} from 'antd';
 
 const PsychologistTab = ({psychologyDetails, isEditPsychologist, form}) => {
+
+    useEffect(() => {
+        if (isEditPsychologist) {
+            form.setFieldsValue({
+                diligence: psychologyDetails?.diligence,
+                sociality: psychologyDetails?.sociality,
+                decency: psychologyDetails?.decency,
+                personality: psychologyDetails?.personality,
+                memory: psychologyDetails?.memory,
+                mind: psychologyDetails?.mind,
+                observation: psychologyDetails?.observation,
+                attentiveness: psychologyDetails?.attentiveness,
+            })
+        }
+    },[isEditPsychologist])
 
     if (!psychologyDetails) return(<Card style={{marginTop: '-20px', textAlign: 'center'}}>Нет данных</Card>);
 
@@ -62,6 +77,8 @@ const PsychologistTab = ({psychologyDetails, isEditPsychologist, form}) => {
         }
     ];
 
+
+
     return (
         <Card style={{marginTop: '-20px'}}>
             <div style={{marginTop: '20px'}}>
@@ -92,7 +109,7 @@ const PsychologistTab = ({psychologyDetails, isEditPsychologist, form}) => {
                                                         isEditPsychologist === true
                                                             ?
                                                             <Form.Item name={json.name}>
-                                                                <Input/>
+                                                                <Input />
                                                             </Form.Item>
                                                             :
                                                             json.text

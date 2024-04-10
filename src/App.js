@@ -18,6 +18,9 @@ import EachStudentPagePsychologist from './componenets/psychologist/students/Eac
 import CreateTestPagePsychologist from './componenets/psychologist/test-psychologist/CreateTestPagePsychologist';
 import EachTestPagePsychologist from './componenets/psychologist/test-psychologist/EachTestPagePsychologist'
 import EachTestPageTeacher from './componenets/teacher/test-teacher/EachTestPageTeacher'
+import ReadAppealsPage from "./componenets/admin/appeals/ReadAppealsPage";
+import AppealsPage from "./componenets/admin/appeals/AppealsPage";
+
 
 function App() {
     const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken'));
@@ -54,6 +57,8 @@ function App() {
                         <Route path='/appeals-teacher' element={<AppealsPageTeacher />} />
                         <Route path='/test-teacher' element={<TestPageTeacher />} />
                         <Route path='/test-teacher/:id/:questionCount' element={<EachTestPageTeacher />} />
+                        <Route path='/appeals' element={<ComponentWithMargin><AppealsPage /></ComponentWithMargin>} />
+                        <Route path='/appeals-read' element={<ReadAppealsPage/>} />
                         {/* Другие маршруты */}
                     </Routes>
                     {<Footer/>}

@@ -5,9 +5,13 @@ class StudentService {
 
     getStudents(schoolId) {
         const accessToken = localStorage.getItem('accessToken');
-        return axios.get(`${Base_URL}/admin/schools/${schoolId}/users?name=&role=STUDENT`, {
-            headers: { Authorization: `Bearer ${accessToken}`}
-        });
+        return axios.get(`${Base_URL}/admin/schools/${schoolId}/users/students`, {
+            headers: { Authorization: `Bearer ${accessToken}`},
+                params: {
+                    search: ''
+                },
+        },
+        );
     };
 
     createStudents(data) {

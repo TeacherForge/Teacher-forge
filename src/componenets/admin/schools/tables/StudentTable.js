@@ -5,7 +5,7 @@ import TeacherService from "../../../../services/TeacherService";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import StudentService from "../../../../services/StudentService";
 
-const StudentTable = () => {
+const StudentTable = ({open}) => {
     const { id } = useParams();
 
     const [data,setData] = useState([]);
@@ -22,7 +22,7 @@ const StudentTable = () => {
         });
     }
 
-    
+
 
     const columns = [
         {
@@ -33,7 +33,7 @@ const StudentTable = () => {
             render: (text, record) => {
                 return (
                     <>
-                    {record.name + ' ' + record.middleName + ' ' + record.surname}
+                    {record.name + ' ' + record.middlename + ' ' + record.surname}
                     </>
                 )
             },
@@ -83,7 +83,7 @@ const StudentTable = () => {
 
      useEffect(() => {
          getTeachersInfo();
-    },[]);
+    },[open]);
 
     const getTeachersInfo = async () => {
         await StudentService.getStudents(id).then((res) => {

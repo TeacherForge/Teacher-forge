@@ -3,25 +3,24 @@ import {Table, Button, Row, Col, Input, Form, Typography, notification} from 'an
 import './index.css';
 import { useForm } from 'antd/es/form/Form';
 import {CloseOutlined, ContainerOutlined} from '@ant-design/icons';
-import TeacherService from "../../../../services/TeacherService";
 import {useParams} from "react-router-dom";
 import PsychologyService from "../../../../services/PsychologyService";
 
-const PsychologistTable = () => {
+const PsychologistTable = ({open}) => {
     const { id } = useParams();
 
     const [expandedRowKeys, setExpandedRowKeys] = useState([]);
     const [data,setData] = useState([]);
-    const [record, setRecord] = useState();
+    const [item, setItem] = useState();
     const [position, setPosition] = useState();
     const [phoneNumber, setNumber] = useState();
     const [form] = useForm();
 
-    const handleExpand = (key) => {
-        if (expandedRowKeys.includes(key)) {
+    const handleExpand = (recordKey) => {
+        if (expandedRowKeys.includes(recordKey)) {
             setExpandedRowKeys([]);
         } else {
-            setExpandedRowKeys([key]);
+            setExpandedRowKeys([recordKey]);
         }
     };
 
@@ -38,7 +37,7 @@ const PsychologistTable = () => {
             }
         });
 
-        await PsychologyService.updatePsychology(id, data).then(() => {
+        await PsychologyService.updatePsychology(id,item?.key, data).then(() => {
             getPsychologyInfo();
         }).catch((e) => {
             notification.error({
@@ -52,16 +51,16 @@ const PsychologistTable = () => {
     );
 
     useEffect(() => {
-        if (record) {
+        if (item) {
             form.setFieldsValue({
-                userName:record?.userName,
-                lastName: record?.lastName,
-                middleName: record?.middleName,
-                newPassword: record?.password,
-                repeatPassword:record?.password,
+                userName:item?.userName,
+                lastName: item?.lastName,
+                middleName: item?.middleName,
+                newPassword: item?.password,
+                repeatPassword:item?.password,
             })
         }
-    },[record])
+    },[item, form])
 
     const handleChange = (type,value) => {
         if (type==='position') {
@@ -123,7 +122,12 @@ const PsychologistTable = () => {
         );
     };
 
-    
+    const handleEdit = (record) => {
+        setItem(record);
+        handleExpand(record.key);
+    }
+
+
 
     const columns = [
         {
@@ -175,7 +179,7 @@ const PsychologistTable = () => {
             render: (text, record) => (
                 <Row>
                     <Col>
-                        <Button type={"link"} onClick={() => { handleExpand(record.key); setRecord(record) }}>
+                        <Button type={"link"} onClick={() => {handleEdit(record)}}>
                             Edit
                         </Button>
                     </Col>
@@ -191,12 +195,13 @@ const PsychologistTable = () => {
 
     useEffect(() => {
         getPsychologyInfo();
-    },[]);
+    },[open]);
 
     const getPsychologyInfo = async () => {
         await PsychologyService.getPsychology(id).then((res) => {
             const updatedDataSource = res.data.map(item => ({
                 ...item,
+                key: item.id,
                 extra: extraform(),
             }));
             setData(updatedDataSource);

@@ -6,7 +6,7 @@ import {CloseOutlined, ContainerOutlined} from '@ant-design/icons';
 import TeacherService from "../../../../services/TeacherService";
 import {useParams} from "react-router-dom";
 
-const TeachersTable = () => {
+const TeachersTable = ({open}) => {
     const { id } = useParams();
 
     const [expandedRowKeys, setExpandedRowKeys] = useState([]);
@@ -15,6 +15,7 @@ const TeachersTable = () => {
     const [position, setPosition] = useState();
     const [phoneNumber, setNumber] = useState();
     const [category, setCategory] = useState();
+    const [teacherId, setTeacherID] = useState(null);
     const [form] = useForm();
 
     const handleExpand = (key) => {
@@ -25,31 +26,34 @@ const TeachersTable = () => {
         }
     };
 
+
+
+
     const handleSave = async () => {
         const values = form.getFieldsValue();
-        const data = {
-            ...values,
-            phoneNumber,
-            position,
-            category
-        };
-        Object.entries(data).forEach(([key, value]) => {
-            if (value === undefined) {
-                delete data[key];
-            }
-        });
+            const json = {
+                ...values,
+                phoneNumber,
+                position,
+                category
+            };
+            Object.entries(json).forEach(([key, value]) => {
+                if (value === undefined) {
+                    delete json[key];
+                }
+            });
 
-        await TeacherService.updateTeachers(id, data).then(() => {
-            getTeachersInfo();
-        }).catch((e) => {
-            notification.error({
-                message: e
-            })
-        });
+            await TeacherService.updateTeachers(id, json).then(() => {
+                getTeachersInfo();
+            }).catch((e) => {
+                notification.error({
+                    message: e
+                })
+            });
     };
 
     const expandedRowRender = (record) => (
-        <p style={{ margin: 0 }}>{record.extra}</p>
+        <div style={{ margin: 0 }}>{record.extra}</div>
     );
 
     useEffect(() => {
@@ -106,10 +110,10 @@ const TeachersTable = () => {
                     </Form>
                 </Col>
                 <Col xs={9}>
-                    <Button style={{ borderRadius: '20px', width: '50px', position: 'absolute', right: 0 }} onClick={handleExpand}>
+                    <Button style={{ borderRadius: '20px', width: '50px', position: 'absolute', right: 0 }} onClick={() => handleExpand()}>
                         <Typography.Text style={{ fontSize: '15px' }}><CloseOutlined /></Typography.Text>
                     </Button>
-                    <Button type={'primary'} style={{ borderRadius: '20px', width: '130px', position: 'absolute', bottom: 0, right: 0 }} onClick={handleSave}>
+                    <Button type={'primary'} style={{ borderRadius: '20px', width: '130px', position: 'absolute', bottom: 0, right: 0 }} onClick={() =>handleSave()}>
                         <Typography.Text style={{ fontSize: '15px', color: 'white' }}><b><ContainerOutlined /> &nbsp; Save</b></Typography.Text>
                     </Button>
                 </Col>
@@ -192,7 +196,11 @@ const TeachersTable = () => {
             render: (text, record) => (
                 <Row>
                     <Col>
-                        <Button type={"link"} onClick={() => { handleExpand(record.key); setRecord(record) }}>
+                        <Button type={"link"} onClick={() => {
+                            setTeacherID(record.key);
+                            handleExpand(record.key);
+                            setRecord(record);
+                        }}>
                             Edit
                         </Button>
                     </Col>
@@ -205,15 +213,16 @@ const TeachersTable = () => {
             ),
         },
     ];
-    
+
     useEffect(() => {
     getTeachersInfo();
-    },[]);
+    },[open]);
 
     const getTeachersInfo = async () => {
         await TeacherService.getTeachers(id).then((res) => {
             const updatedDataSource = res.data.map(item => ({
                 ...item,
+                key: item.id,
                 extra: extraform(),
             }));
             setData(updatedDataSource);

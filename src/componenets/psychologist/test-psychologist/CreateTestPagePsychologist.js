@@ -36,12 +36,7 @@ const CreateTestPage = () => {
           headers: { Authorization: `Bearer ${accessToken}` }
         });
         setQuestions(response.data);
-      } catch (error) {
-        notification.error({
-          message: 'Ошибка получения вопросов',
-          description: error.message
-        });
-      }
+      } catch (error) {}
     };
   
     fetchQuestions();

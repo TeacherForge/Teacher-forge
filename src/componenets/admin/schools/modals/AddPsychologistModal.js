@@ -1,9 +1,33 @@
 import React from 'react';
 import {useForm} from "antd/es/form/Form";
-import {Button, Col, Form, Input, Modal, Row, Typography} from "antd";
-
+import {Button, Col, Form, Image, Input, Modal, Row, Typography} from "antd";
+import TeacherService from "../../../../services/TeacherService";
+import PsychologyService from "../../../../services/PsychologyService";
+import {useParams} from "react-router-dom";
+import psychologyImage from '../../images/PsychologistAdd.svg'
 const AddPsychologistModal = ({isOpen, onClose}) => {
     const [form] = useForm();
+    const { id } = useParams();
+
+    const handleClick = async () => {
+        const values = form.getFieldsValue();
+        const data = {
+            email: values.email,
+            userName: values.userName,
+            lastName: values.lastName,
+            middleName: values.middleName,
+            userRole: "PSYCHOLOGIST",
+            password: values.password,
+            schoolId: id,
+            position: values.position,
+            category: values.category,
+            phoneNumber: values.number
+        };
+        await PsychologyService.createPsychology(data);
+        onClose();
+        form.resetFields();
+    }
+
 
     return (
         <Modal
@@ -19,11 +43,18 @@ const AddPsychologistModal = ({isOpen, onClose}) => {
             </div>
             <Row style={{marginTop:'30px', marginBottom:'10px'}}>
                 <Col xs={10}>
+                    <Image src={psychologyImage} alt={'psychology'} />
                 </Col>
                 <Col xs={14}>
                     <Form form={form}>
-                        <Form.Item name={'fullName'}>
+                        <Form.Item name={'userName'}>
                             <Input style={{borderRadius:'80px', borderColor:'#000', height:'40px'}} placeHolder={'Full Name'}/>
+                        </Form.Item>
+                        <Form.Item name={'lastName'}>
+                            <Input style={{borderRadius:'80px', borderColor:'#000', height:'40px'}} placeHolder={'Last Name'}/>
+                        </Form.Item>
+                        <Form.Item name={'middleName'}>
+                            <Input style={{borderRadius:'80px', borderColor:'#000', height:'40px'}} placeHolder={'Middle Name'}/>
                         </Form.Item>
                         <Form.Item name={'password'}>
                             <Input style={{borderRadius:'80px', borderColor:'#000', height:'40px'}} placeHolder={'Password'}/>
@@ -41,7 +72,7 @@ const AddPsychologistModal = ({isOpen, onClose}) => {
                             <Input style={{borderRadius:'80px', borderColor:'#000', height:'40px'}} placeHolder={'Category'}/>
                         </Form.Item>
                     </Form>
-                    <Button style={{borderRadius:'80px', width:'100%'}} type={'primary'}>
+                    <Button style={{borderRadius:'80px', width:'100%'}} type={'primary'} onClick={() => handleClick()}>
                         Add
                     </Button>
                 </Col>
