@@ -7,6 +7,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import './ReportsPage.css';
 import { SendReport } from '../../../services/ReportService';
 import { uploadFile } from '../../../services/UploadFileService';
+import {downloadFile}  from '../../../services/DownLoadFileService'
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -19,6 +20,8 @@ const ReportsPage = () => {
   const [searchText, setSearchText] = useState('');
   const accessToken = localStorage.getItem('accessToken');
   const [isOtherSelected, setIsOtherSelected] = useState(false);
+  const [studentPhotos, setStudentPhotos] = useState({});
+
 
 
   const handleViolationTypeChange = (value) => {
@@ -55,8 +58,23 @@ const ReportsPage = () => {
           id: student.id,
           name: `${student.surname} ${student.name} ${student.middlename}`,
           classRoom: student.classRoom,
+          photoId: student.photoId,
+          phoneNumber: student.phoneNumber,
+          email:student.email
         }));
         setStudents(filteredStudents);
+
+        const photos = {};
+        await Promise.all(filteredStudents.map(async (student) => {
+          if (student.photoId) {
+            const photoData = await downloadFile(student.photoId);
+            if (photoData && photoData.isImage) {
+              photos[student.id] = photoData.downloadUrl;
+            }
+          }
+        }));
+  
+        setStudentPhotos(photos);
       } catch (error) {}
     } else {
       setStudents([]);
@@ -122,12 +140,28 @@ const ReportsPage = () => {
           onSearch={handleSearch}
           onChange={(value) => setSelectedStudentId(value)}
           notFoundContent={null}
-          style={{ width: '100%', overflow: 'auto' }}
+          style={{ width: '100%', overflow: 'auto', height:'100%' }}
           listItemHeight={10} // Установите нужную высоту элемента
           listHeight={250} // Установите максимальную высоту списка
         >
         {students.map((student) => (
-        <Option key={student.id} value={student.id}>{`${student.name} (${student.classRoom})`}</Option>
+
+        <Option key={student.id} value={student.id}>
+          <div style={{ display: 'flex' , flexDirection:'row', alignItems:'center'}}>
+              {studentPhotos[student.id] && (
+                <img
+                  src={studentPhotos[student.id]}
+                  alt={`${student.name}'s photo`}
+                  style={{ width: '60px', height: '60px', marginRight: '10px', objectFit: 'cover' }}
+                />
+              )}
+            <div style={{display:'flex', flexDirection:'column'}}>
+            <span>{`${student.name} (${student.classRoom})`}</span>
+            <span>{`${student.phoneNumber}`}</span>
+            <span>{`${student.email}`}</span>
+            </div>
+          </div>
+        </Option>
         ))}
         </Select>
       </Form.Item>
@@ -167,15 +201,15 @@ const ReportsPage = () => {
         <Input />
       </Form.Item>
       <Form.Item
-  name="comments"
-  label="Comment"
-  rules={[
-    { 
-      required: isOtherSelected,
-      message: 'Comments are required when "Other" is selected.',
-    },
-  ]}
->
+        name="comments"
+        label="Comment"
+        rules={[
+          { 
+            required: isOtherSelected,
+            message: 'Comments are required when "Other" is selected.',
+          },
+        ]}
+      >
   <TextArea />
 </Form.Item>
 

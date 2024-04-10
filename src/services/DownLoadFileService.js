@@ -21,7 +21,7 @@ export const downloadFile = async (fileId) => {
 
     const blob = new Blob([response.data]);
     const downloadUrl = window.URL.createObjectURL(blob);
-    const isImage = /\.(jpg|jpeg|png|gif)$/i.test(filename);
+    const isImage = /\.(jpg|jpeg|png)$/i.test(filename);
 
     return { downloadUrl, filename, isImage };
   } catch (error) {

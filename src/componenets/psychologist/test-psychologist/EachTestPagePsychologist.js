@@ -3,21 +3,21 @@ import axios from 'axios';
 import {Base_URL} from "../../../constant";
 import { useParams, useNavigate} from 'react-router-dom';
 import { Table, notification} from 'antd';
-
-const TestPageTeacher = () => {
+import './CreateTestPagePsychologist.css'
+const EachTestPagePsychologist = () => {
   const {id} = useParams();
   const accessToken = localStorage.getItem('accessToken')
-  const [testsTeacher, setTestsTeacher] = useState([]);
+  const [testResults, setTestResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchTests = async () => {
+    const fetchTestResults = async () => {
       try {
-        const response = await axios.get(`${Base_URL}/client/tests`, {
+        const response = await axios.get(`${Base_URL}/psychologist/tests/${id}`, {
             headers: { Authorization: `Bearer ${accessToken}` }
           });
-        setTestsTeacher(response.data.map((testTeacher, index) => ({ ...testTeacher, key: index })));
+        setTestResults(response.data.map((test, index) => ({ ...test, key: index })));
       } catch (error) {
         console.error('Ошибка при получении результатов теста:', error);
       } finally {
@@ -25,26 +25,31 @@ const TestPageTeacher = () => {
       }
     };
 
-    fetchTests();
+    fetchTestResults();
   }, [id]);
 
   const columns = [
     {
-      title:'Title',
-      dataIndex: 'title',
-      key: 'title',
+      title: 'Who Answered',
+      dataIndex: 'answeredFullName',
+      key: 'answeredFullName',
     },
     {
-      title:'Number of questions',
-      dataIndex: 'questionCount',
-      key: 'questionCount',
+      title: 'Status',
+      dataIndex: 'answered',
+      key: 'answered',
+      render: (answered) => (
+        <span style={{ color: answered ? 'green' : 'red' }}>
+          {answered ? 'ANSWERED' : 'NOT ANSWERED'}
+        </span>
+      ),
     },
 ];
 
 const onRowClick = (test) => {
     return {
       onClick: () => {
-          navigate(`/test-teacher/${test.id}/${test.questionCount}`);
+          navigate(`/test-psychologist/${test.id}/create`);
       },
     };
   };
@@ -52,9 +57,9 @@ const onRowClick = (test) => {
   return (
     <div style={{ padding: '100px 200px 20px 200px' }} className='create-test-container' >
         <Table 
-      dataSource={testsTeacher} 
+      dataSource={testResults} 
       columns={columns} 
-      onRow={onRowClick}
+      onRow={onRowClick} 
       loading={loading}
       pagination={false}
         />
@@ -62,4 +67,4 @@ const onRowClick = (test) => {
   );
 };
 
-export default TestPageTeacher;
+export default EachTestPagePsychologist;

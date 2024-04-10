@@ -24,6 +24,7 @@ const Navbar = () => {
     return (
         <nav style={{
             backgroundColor: getColor(),
+            minWidth:1000,
             color: 'white',
             display: 'flex',
             justifyContent: 'space-between',

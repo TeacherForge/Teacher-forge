@@ -111,14 +111,12 @@ const EachReportPagePsychologist = () => {
         {
           title: newWork.title,
           description: newWork.description,
-          // Преобразование даты в необходимый формат (если используется moment)
           workDate: newWork.workDate.format('YYYY-MM-DD'),
         },
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-      // Обработка успешного ответа
       setWorkModalVisible(false);
       notification.success({
         message: 'Success',

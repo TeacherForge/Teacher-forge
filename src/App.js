@@ -3,6 +3,7 @@ import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom
 import LoginPage from './componenets/login/LoginPage';
 import {createContext, useContext, useEffect, useState} from 'react';
 import Navbar from './componenets/navbar/Navbar';
+import Footer from './componenets/footer/Footer';
 import SchoolsPage from "./componenets/admin/schools/SchoolsPage";
 import ReportsPage from "./componenets/teacher/report-teacher/ReportsPage";
 import EachStudentPage from "./componenets/admin/schools/each/EachStudentPage";
@@ -11,13 +12,16 @@ import ReportsPagePsychologist from './componenets/psychologist/report-psycholog
 import EachReportPagePsychologist from './componenets/psychologist/report-psychologist/EachReportPagePsychologist'
 import AppealsPagePsychologist from "./componenets/psychologist/appeals-psychologist/AppealsPagePsychologist";
 import EachSchoolPage from "./componenets/admin/schools/each/EachSchoolPage";
-import TestPageTeacher from "./componenets/teacher/test-teacher/TestPageTeacher"
-import TestPagePsychologist from "./componenets/psychologist/test-psychologist/TestPagePsychologist"
-import EachStudentPagePsychologist from './componenets/psychologist/students/EachStudentPagePsychologist'
+import TestPageTeacher from "./componenets/teacher/test-teacher/TestPageTeacher";
+import TestPagePsychologist from "./componenets/psychologist/test-psychologist/TestPagePsychologist";
+import EachStudentPagePsychologist from './componenets/psychologist/students/EachStudentPagePsychologist';
+import CreateTestPagePsychologist from './componenets/psychologist/test-psychologist/CreateTestPagePsychologist';
+import EachTestPagePsychologist from './componenets/psychologist/test-psychologist/EachTestPagePsychologist'
+import EachTestPageTeacher from './componenets/teacher/test-teacher/EachTestPageTeacher'
 
 function App() {
-    const [accessToken, setAccessToken] = useState(false);
-    const [role, setRole] = useState(false);
+    const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken'));
+    const [role, setRole] = useState(localStorage.getItem('role'));
     
     const getHomePagePath = () => {
         switch (role) {
@@ -41,13 +45,18 @@ function App() {
                         <Route path='/schools/student/:studentId' element={<ComponentWithMargin><EachStudentPage /></ComponentWithMargin>} />
                         <Route path='/report-teacher' element={<ReportsPage />} />
                         <Route path='/report-psychologist' element={<ReportsPagePsychologist />}/>
-                        <Route path='/psychologist/students/:studentId' element={<ComponentWithMargin><EachStudentPagePsychologist /></ComponentWithMargin>} />
+                        <Route path='/psychologist/students/:studentId' element={<EachStudentPagePsychologist />} />
+                        <Route path='/test-psychologist' element={<TestPagePsychologist />}/>
+                        <Route path='/test-psychologist/:id' element={<EachTestPagePsychologist />}/>
+                        <Route path='/test-psychologist/:id/create' element={<CreateTestPagePsychologist />}/>
                         <Route path='/report/:id' element={<EachReportPagePsychologist />} />
                         <Route path='/appeals-psychologist' element={<AppealsPagePsychologist />} />
                         <Route path='/appeals-teacher' element={<AppealsPageTeacher />} />
-                        {/*<Route path='/test-teacher' element={<TestPageTeacher />} />
+                        <Route path='/test-teacher' element={<TestPageTeacher />} />
+                        <Route path='/test-teacher/:id/:questionCount' element={<EachTestPageTeacher />} />
                         {/* Другие маршруты */}
                     </Routes>
+                    {<Footer/>}
                 </Router>
             </div>
         </UserContext.Provider>

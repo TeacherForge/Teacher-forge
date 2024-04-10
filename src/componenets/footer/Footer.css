@@ -1,0 +1,6 @@
+.footer{
+    background-image: url('../../constant/image/Footer_element_blue.svg'); /* Убедитесь, что путь верный */
+    background-repeat: no-repeat; /* Предотвращает повторение изображения */
+    overflow-x: hidden;
+    background-position: 100% 50px;
+}
