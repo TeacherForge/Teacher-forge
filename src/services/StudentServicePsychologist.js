@@ -19,6 +19,8 @@ class StudentServicePsychologist {
 
 }
 
-export default new StudentServicePsychologist();
+const studentServicePsychologistInstance = new StudentServicePsychologist();
+export default studentServicePsychologistInstance;
+
 
 

@@ -37,4 +37,5 @@ class StudentService {
 
 }
 
-export default new StudentService();
+const studentServiceInstance = new StudentService();
+export default studentServiceInstance;

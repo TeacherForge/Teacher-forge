@@ -10,4 +10,7 @@ class RegionService {
     };
 }
 
-export default new RegionService();
+
+const regionServiceInstance = new RegionService();
+export default regionServiceInstance;
+

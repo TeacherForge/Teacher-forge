@@ -29,4 +29,6 @@ class PsychologyService{
         })
     };
 }
-export default new PsychologyService();
+
+const psychologyServiceInstance = new PsychologyService();
+export default psychologyServiceInstance;

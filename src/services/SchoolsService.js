@@ -42,4 +42,7 @@ class SchoolService{
     }
 
 }
-export default new SchoolService();
+
+const schoolServiceInstance = new SchoolService();
+export default schoolServiceInstance;
+

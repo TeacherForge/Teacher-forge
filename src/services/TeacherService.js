@@ -31,4 +31,7 @@ class TeacherService{
         })
     };
 }
-export default new TeacherService();
+
+const teacherServiceInstance = new TeacherService();
+export default teacherServiceInstance;
+
