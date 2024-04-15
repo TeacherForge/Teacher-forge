@@ -14,17 +14,31 @@ const AppealsPageTeacher = () => {
   const [form] = Form.useForm();
 
   const onFinish = async (values) => {
-      try {
-        const accessToken = localStorage.getItem('accessToken');
-        const response = await axios.post(`${Base_URL}/client/appeals`,values, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        
-        });
-        form.resetFields(); 
-      } catch (error) {}
+    const { attachment, ...fieldsWithoutAttachment } = values;
+    const dataToSend = { ...fieldsWithoutAttachment, documentIds };
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      await axios.post(`${Base_URL}/client/appeals`, dataToSend, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+  
+      form.resetFields();
+      documentIds = []; 
+
+      notification.success({
+        message: 'Appeal Submitted',
+        description: 'Your appeal has been successfully submitted.',
+      });
+    } catch (error) {
+      notification.error({
+        message: 'Submission Error',
+        description: 'There was an error submitting your appeal.',
+      });
+    }
   };
+  
 
   let documentIds = [];
   const handleUpload = async (file) => {

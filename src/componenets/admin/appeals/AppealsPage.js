@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card,Table, Input, Button, Space, Modal, notification,Typography, Pagination ,Col, Row,Image} from 'antd';
+import { Card,Table, Input, Button, Space, Modal, notification,Typography, Pagination ,Col, Row,Select} from 'antd';
 import {
     DeleteIcon,
     FiltrationIcon,
@@ -11,8 +11,10 @@ import {
 } from "../../../constant/image/icons/Index.";
 import axios from 'axios';
 import {Base_URL} from "../../../constant";
+import { SearchOutlined} from '@ant-design/icons';
 
 const AppealsPage = () => {
+    const {Option } = Select;
     const [currentPage, setCurrentPage] = useState(1);
     const [totalRecords, setTotalRecords] = useState(); 
     const pageSize = 30;
@@ -21,6 +23,26 @@ const AppealsPage = () => {
     const navigate = useNavigate();
     const accessToken = localStorage.getItem('accessToken');
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [filter, setFilter] = useState();
+
+    const handleSearch = (value) => {
+        setSearchText(value);
+        setCurrentPage(1); 
+      };
+    
+    const handleFilterChange = (newFilter) => {
+        let readValue;
+        if (newFilter === 'read') {
+            readValue = true;
+        } else if (newFilter === 'unread') {
+            readValue = false;
+        } else {
+            readValue = undefined; 
+        }
+
+        setFilter(readValue);
+        setCurrentPage(1);
+    };
 
     const onRowClick = (record) => {
         navigate(`/appeals-read/${record.id}`);
@@ -72,43 +94,45 @@ const AppealsPage = () => {
         } catch (error) {}
     };
 
-    const markAsRead = async (read) => {
-        try {
-            const promises = selectedRowKeys.map((id) =>
-                axios.put(`${Base_URL}/admin/appeals/${id}`, { }, {
-                    headers: { Authorization: `Bearer ${accessToken}` },
-                    params: {
-                        read:read,
-                    }
-                })
-            );
-            await Promise.all(promises);
-            refreshAppeals();
-        } catch (error) {}
-    };
-
 
     useEffect(() => {
         fetchAppeals();
-    }, [currentPage]);
+    }, [currentPage, filter,searchText]);
 
     const fetchAppeals = async () => {
+        const params = {
+          page: currentPage,
+          pageSize: pageSize,
+          read: filter,
+          search: searchText,
+        };
+    
         try {
-            const response = await axios.get(`${Base_URL}/admin/appeals`, {
-                headers: { Authorization: `Bearer ${accessToken}` },
-                params: {
-                    page: currentPage,
-                    pageSize: pageSize,
-                },
-            });
-            setAppeals(response.data.map((report, index) => ({ ...report, key: report.id })));
-            setTotalRecords(parseInt(response.headers['x-total-count'], 10));
+          const response = await axios.get(`${Base_URL}/admin/appeals`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+            params,
+          });
+          setAppeals(response.data.map((report, index) => ({ ...report, key: report.id })));
+          setTotalRecords(parseInt(response.headers['x-total-count'], 10));
         } catch (error) {
-            notification.error({
-                message: 'Ошибка при получении обращений',
-                description: 'Не удалось получить данные.'
-            });
+          notification.error({
+            message: 'Ошибка при получении обращений',
+            description: 'Не удалось получить данные.'
+          });
         }
+      };
+
+    const showDeleteConfirm = () => {
+        Modal.confirm({
+            title: 'Are you sure delete this appeal?',
+            content: 'This action cannot be undone and will permanently delete the appeal from the system.',
+            okText: 'Yes, delete it',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk() {
+                deleteSelectedAppeals();
+            }
+        });
     };
       
     const getRowStyle = (appeal) => {
@@ -126,12 +150,13 @@ const AppealsPage = () => {
         borderTopRightRadius: '20px',
         borderBottomLeftRadius: '20px',
         borderBottomRightRadius: '20px',
-        boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)',
+        boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)',
         width: '100%',
         height: '50px',
         padding: '4px',
         marginTop:'10px',
-        fontSize:'13px'
+        fontSize:'13px',
+        paddingLeft:'15px'
     };
 
     const styleDivider = {
@@ -143,6 +168,17 @@ const AppealsPage = () => {
     return (
         <>
             <Typography.Title level={2}>Mail for appeals</Typography.Title>
+            <Space style={{}}>
+                <Input
+                showSearch
+                prefix={<SearchOutlined />}
+                style={{width: 600, borderRadius: 50, margin:'5px 0 10px 0'}}
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                placeholder="Search..."
+                />
+
+            </Space>
             <Card style={{minWidth:'1000px'}}>
                 <Row gutter={16} style={{marginLeft: '9px'}}>
                     <Col xs={24} lg={12}>
@@ -161,17 +197,19 @@ const AppealsPage = () => {
                                 <Button onClick={refreshAppeals} style={{border:0, margin:0, padding:0}}><UpdateIcon /></Button>
                             </Col>
                             <Col>
-                                <Button onClick={deleteSelectedAppeals}style={{border:0, margin:0, padding:0}}><DeleteIcon /></Button>
+                                <Button onClick={showDeleteConfirm}style={{border:0, margin:0, padding:0}}><DeleteIcon /></Button>
                             </Col>
-                            <Col>
-                                <Button onClick={() => markAsRead(true)}style={{border:0, margin:0, padding:0}}><OpenLetterIcon /></Button>
-                            </Col>
-                            <Col>
-                                <Button onClick={() => markAsRead(false)}style={{border:0, margin:0, padding:0}}><LetterIcon /></Button>
-                            </Col>
+
                         </Row>
                     </Col>
+
+                        
                     <Col xs={24} lg={12} style={{display:'flex', justifyContent: 'flex-end'}}>
+                        <Select defaultValue="all" style={{ width: 120, margin: 'auto 20px' }} onChange={handleFilterChange}>
+                            <Option value="all">All Mail</Option>
+                            <Option value="read">Read</Option>
+                            <Option value="unread">Unread</Option>
+                        </Select>
                         <Row gutter={24}>
                         <Pagination
                             current={currentPage}
@@ -198,8 +236,7 @@ const AppealsPage = () => {
                     </Col>   
                     <Col style={{width:'20%'}} onClick={() => onRowClick(appeal)}>
                         <Row>
-                            <b><p style={{padding:0, margin:0}}>{appeal.createdFullName}</p></b>
-                            <b><p style={{padding:0, margin:0}}>{appeal.schoolName}</p></b>
+                            <b><p style={{padding:0, margin:0}}>{appeal.createdFullName} {appeal.schoolName}</p></b>
                         </Row>
                         <Row>
                             <p style={{padding:0, margin:0}}>{appeal.schoolAddress}</p>
@@ -207,7 +244,7 @@ const AppealsPage = () => {
                     </Col>
                     <hr style={{margin:0}}></hr>
                     <Col style={{width:'60%', padding:0, margin:0}} onClick={() => onRowClick(appeal)}>
-                        <p style={{margin:0}}>{appeal.topic}</p>
+                        <b><p style={{margin:0}}>{appeal.topic}</p></b>
                         <p style={{height:20, width:'100%', overflow:'hidden', margin: 0}}>{appeal.text}</p>
                     </Col>
                     <Col style={{width:'15%', marginLeft:10}} onClick={() => onRowClick(appeal)}>

@@ -1,11 +1,12 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate} from 'react-router-dom';
-import {RollbackOutlined} from '@ant-design/icons'
+import {RollbackOutlined,FileOutlined} from '@ant-design/icons'
 import {AllEmailIcon, LeftIcon, LetterIcon, OpenLetterIcon, RightIcon,DeleteIcon} from "../../../constant/image/icons/Index.";
-import {Checkbox, Col, Row, Typography, notification, Pagination, Button, Card} from "antd";
+import {Checkbox, Col, Row, Typography, notification, Pagination, Button, Card,Modal} from "antd";
 import axios from 'axios';
 import {Base_URL} from "../../../constant";
+import {downloadFile}  from '../../../services/DownLoadFileService'
 
 
 const ReadAppealsPage = () => {
@@ -17,7 +18,8 @@ const ReadAppealsPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalRecords, setTotalRecords] = useState(); 
     const [read, setRead] = useState();
-    const pageSize = 30;
+    const pageSize = 9;
+    const [fileLinks, setFileLinks] = useState([]);
     const [activeButton, setActiveButton] = useState('all');
     const styleSideBar = {
         backgroundColor: 'white',
@@ -25,43 +27,46 @@ const ReadAppealsPage = () => {
         width: '30%',
         padding: '20px'
     };
-    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const circleStyle = {
         borderTopLeftRadius: '20px',
         borderTopRightRadius: '20px',
         borderBottomLeftRadius: '20px',
         borderBottomRightRadius: '20px',
-        boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)',
+        boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)',
         width: '100%',
         height: '50px',
         padding: '4px',
         marginTop:'10px',
-        fontSize:'13px'
+        fontSize:'13px',
+        paddingLeft:'15px'
     };
 
-    const onRowClick = (record) => {
-        navigate(`/appeals-read/${record.id}`);
-    };
-
-      const onMainCheckboxChange = (event) => {
-        if (event.target.checked) {
-            setSelectedRowKeys(appeals.map((appeal) => appeal.id));
-        } else {
-            setSelectedRowKeys([]);
-        }
-    };
-
-    const onCheckboxChange = (event, id) => {
-        const newSelectedRowKeys = [...selectedRowKeys];
-        if (event.target.checked) {
-            newSelectedRowKeys.push(id);
-        } else {
-            const index = newSelectedRowKeys.indexOf(id);
-            if (index > -1) {
-                newSelectedRowKeys.splice(index, 1);
+    const showDeleteConfirm = () => {
+        Modal.confirm({
+            title: 'Are you sure delete this appeal?',
+            content: 'This action cannot be undone and will permanently delete the appeal from the system.',
+            okText: 'Yes, delete it',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk() {
+                deleteAppeal();
             }
+        });
+    };
+
+    const onRowClick = async (selectedAppeal) => {
+        try {
+            const response = await axios.get(`${Base_URL}/admin/appeals/${selectedAppeal.id}`, {
+                headers: { Authorization: `Bearer ${accessToken}` },
+            });
+            setAppeal(response.data);
+            await fetchAppeals();
+        } catch (error) {
+            notification.error({
+                message: 'Error',
+                description: 'Could not fetch appeal details.',
+            });
         }
-        setSelectedRowKeys(newSelectedRowKeys);
     };
 
     const handlePageChange = async (value) => {
@@ -72,21 +77,34 @@ const ReadAppealsPage = () => {
     fetchAppeals();
     }
 
-    const refreshAppeals = () => {
-        fetchAppeals();
-    };
 
     const deleteAppeal = async () => {
+        if (!appeal || !appeal.id) {
+            notification.error({
+                message: 'No Appeal Selected',
+                description: 'Please select an appeal to delete.',
+            });
+            return;
+        }
+    
         try {
-            const del = appeal.id;
-            axios.delete(`${Base_URL}/admin/appeals/${del}`, {
+            const response = await axios.delete(`${Base_URL}/admin/appeals/${appeal.id}`, {
                 headers: { Authorization: `Bearer ${accessToken}` }
             });
-            
-            refreshAppeals();
-            setSelectedRowKeys([]); 
-            setAppeal();
-        } catch (error) {}
+            if (response.status === 200) {
+                notification.success({
+                    message: 'Appeal Deleted',
+                    description: 'The appeal has been successfully deleted.'
+                });
+                setAppeal(null); // Clear the current appeal details from the view
+                await fetchAppeals(); // Refresh the list of appeals
+            }
+        } catch (error) {
+            notification.error({
+                message: 'Failed to Delete Appeal',
+                description: 'An error occurred while attempting to delete the appeal.'
+            });
+        }
     };
 
     const markAsRead = async (read) => {
@@ -95,12 +113,10 @@ const ReadAppealsPage = () => {
         } else
         setRead(read);
     };
-    
-
 
     useEffect(() => {
         fetchAppeals();
-    }, [currentPage, read]);
+    }, [currentPage]);
 
     useEffect(() => {
         fetchAppeal();
@@ -112,6 +128,8 @@ const ReadAppealsPage = () => {
                 headers: { Authorization: `Bearer ${accessToken}` },
                 params: {
                     read: read,
+                    page: currentPage,
+                    pageSize: pageSize,
                 }
             });
             setAppeals(response.data.map((report, index) => ({ ...report, key: report.id })));
@@ -138,14 +156,30 @@ const ReadAppealsPage = () => {
             });
         }
     };
+
+    useEffect(() => {
+        const fetchFiles = async () => {
+          if (appeal && appeal.documentIds && appeal.documentIds.length > 0) {
+            const linksPromises = appeal.documentIds.map(fileId => downloadFile(fileId));
+            try {
+              const links = await Promise.all(linksPromises);
+              setFileLinks(links.filter(link => link !== null));
+            } catch (error) {}
+          }
+        };
+      
+        if (appeal && appeal.documentIds) {
+            fetchFiles();
+        }
+      }, [appeal, appeal?.documentIds]);
     
 
     const getRowStyle = (appeal) => {
         let style = { ...circleStyle };
-        if (selectedRowKeys.includes(appeal.id)) {
-            style.backgroundColor = '#A2DEFF';
-        } else if (appeal.read) {
+        if (appeal.read) {
             style.backgroundColor = '#EBEBEB';
+        } else {
+            style.backgroundColor = '#FFFFFF';
         }
         return style;
     };
@@ -226,16 +260,6 @@ const ReadAppealsPage = () => {
                     </Col>
                 </Row>
                 <Row style={{marginTop:'15px'}}>
-                    <Col style={{display:'flex', flexDirection:'row', alignItems:'center', marginTop:'-4px'}}>
-                        <input
-                            type={'checkbox'}
-                            className='maincheck'
-                            style={{ width: '15px', height: '15px' }}
-                            onChange={onMainCheckboxChange}
-                            checked={selectedRowKeys.length === appeals.length && appeals.length > 0}
-                            indeterminate={selectedRowKeys.length > 0 && selectedRowKeys.length < appeals.length}
-                        />
-                    </Col>
                     <Col xs={24} lg={22} style={{display:'flex', justifyContent: 'flex-end',marginTop:'2px'}}>
                         <Row gutter={24}>
                             <Pagination
@@ -253,16 +277,8 @@ const ReadAppealsPage = () => {
                 <hr />
                 <div  >
                 {appeals.map((appeal, index) => (
-                    <Row key={appeal.id} style={getRowStyle(appeal)} >
-                    <Col style={{height:'100%',display:'flex', flexDirection:'row', alignItems:'center', marginRight:10}}>
-                        <input
-                        type={'checkbox'}
-                        style={{ width: '15px', height: '15px' }}
-                        checked={selectedRowKeys.includes(appeal.id)}
-                        onChange={(event) => onCheckboxChange(event, appeal.id)}
-                    />
-                    </Col>   
-                    <Col style={{width:'90%'}} onClick={() => onRowClick(appeal)}>
+                    <Row key={appeal.id} style={getRowStyle(appeal)} onClick={() => onRowClick(appeal)}>
+                    <Col style={{width:'90%'}}>
                         <Row>
                             <Col style={{width:'75%'}}><b><p style={{padding:0, margin:0}}>
                                 {appeal.createdFullName} {appeal.schoolName} 
@@ -290,7 +306,7 @@ const ReadAppealsPage = () => {
                             <Button onClick={callback} style={{border:0}}><RollbackOutlined /></Button>
                         </Col>
                         <Col>
-                            <Button onClick={deleteAppeal} style={{border:0}}><DeleteIcon /></Button>
+                            <Button onClick={showDeleteConfirm} style={{border:0}}><DeleteIcon /></Button>
                         </Col>
                     </Row>
                     <hr/>
@@ -313,6 +329,19 @@ const ReadAppealsPage = () => {
                             <Col>
                                 <Row style={{width:'100%'}}><b><p style={{fontSize:20}}>{appeal && appeal.topic}</p></b></Row>
                                 <Row style={{width:'100%'}}><p style={{fontSize:12}}>{appeal && appeal.text}</p></Row>
+                                <Row>
+                                <div className="files">
+                                {fileLinks.map((file, index) => {
+                                    return (
+                                    <div key={index} className="file-item">
+                                        <a href={file.downloadUrl} download={file.filename}>
+                                        <Button style={{border:0}} icon={<FileOutlined style={{color:'#0085FF'}}/>} size="small">{file.filename}</Button>
+                                        </a>
+                                    </div>
+                                    );
+                                })}
+                                </div>
+                                </Row>
                             </Col>
                         </Row>
                         <div >

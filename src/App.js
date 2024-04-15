@@ -17,6 +17,7 @@ import TestPagePsychologist from "./componenets/psychologist/test-psychologist/T
 import EachStudentPagePsychologist from './componenets/psychologist/students/EachStudentPagePsychologist';
 import CreateTestPagePsychologist from './componenets/psychologist/test-psychologist/CreateTestPagePsychologist';
 import EachTestPagePsychologist from './componenets/psychologist/test-psychologist/EachTestPagePsychologist'
+import CheckTestPagePsychologist from './componenets/psychologist/test-psychologist/CheckTestPagePsychologist'
 import EachTestPageTeacher from './componenets/teacher/test-teacher/EachTestPageTeacher'
 import ReadAppealsPage from "./componenets/admin/appeals/ReadAppealsPage";
 import AppealsPage from "./componenets/admin/appeals/AppealsPage";
@@ -51,6 +52,7 @@ function App() {
                         <Route path='/psychologist/students/:studentId' element={<EachStudentPagePsychologist />} />
                         <Route path='/test-psychologist' element={<TestPagePsychologist />}/>
                         <Route path='/test-psychologist/:id' element={<EachTestPagePsychologist />}/>
+                        <Route path='/test-psychologist/:id/teacher/:teacherId' element={<CheckTestPagePsychologist />}/>
                         <Route path='/test-psychologist/:id/create' element={<CreateTestPagePsychologist />}/>
                         <Route path='/report/:id' element={<EachReportPagePsychologist />} />
                         <Route path='/appeals-psychologist' element={<AppealsPagePsychologist />} />

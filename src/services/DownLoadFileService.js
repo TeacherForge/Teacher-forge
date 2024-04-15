@@ -15,8 +15,15 @@ export const downloadFile = async (fileId) => {
     let filename = '';
     const contentDisposition = response.headers['content-disposition'];
     if (contentDisposition) {
-      const matches = contentDisposition.match(/filename="([^"]+)"/i);
-      filename = matches[1] || 'download';
+      const filenameRegex = /filename\*=UTF-8''(.+)$/i;
+      const matches = contentDisposition.match(filenameRegex);
+      if (matches && matches[1]) {
+        filename = decodeURIComponent(matches[1]);
+      } else {
+        const filenameRegexFallback = /filename="([^"]+)"/i;
+        const matchesFallback = contentDisposition.match(filenameRegexFallback);
+        filename = matchesFallback && matchesFallback[1] ? matchesFallback[1] : 'download';
+      }
     }
 
     const blob = new Blob([response.data]);
@@ -26,7 +33,6 @@ export const downloadFile = async (fileId) => {
     return { downloadUrl, filename, isImage };
   } catch (error) {
     console.error('Error downloading file:', error);
-    // Возвращаем null, если произошла ошибка, чтобы можно было отобразить сообщение об ошибке
     return null;
   }
 };

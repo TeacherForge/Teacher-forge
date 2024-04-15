@@ -46,10 +46,12 @@ const EachTestPagePsychologist = () => {
     },
 ];
 
+
+
 const onRowClick = (test) => {
     return {
       onClick: () => {
-          navigate(`/test-psychologist/${test.id}/create`);
+          navigate(`/test-psychologist/${id}/teacher/${test.teacherId}`);
       },
     };
   };

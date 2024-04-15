@@ -3,7 +3,7 @@ import {NavLink, useNavigate} from 'react-router-dom';
 import './index.css';
 import logoblue from '../../constant/image/logoblue.svg'
 import logowhite from '../../constant/image/logowhite.svg'
-import {Button, Col, Row, Typography} from "antd";
+import {Button, Col, Row, Typography, Image} from "antd";
 import {UserContext, useUserContext} from "../../App";
 import {createContext, useContext, useEffect, useState} from 'react';
 import shiro from '../../constant/image/icons/shiro.png'
@@ -47,6 +47,16 @@ const Navbar = () => {
                         </Col>
                     </Row>
                     </div>
+                    <div style={{display: 'flex', justifyContent: 'center', alignItems:'center'}}>
+                        <Row gutter={16}>
+                            <Col>
+                                <Typography.Text style={{color:'white', textAlign:'center', fontSize:'20px'}}>{fullName}</Typography.Text>
+                            </Col>
+                            <Col>
+                                <Button style={{width:80, height:30 ,borderRadius:'50px', border:'none', padding:0, backgroundImage:`url(${shiro})`, backgroundSize:'cover', backgroundPosition:'center'}} onClick={() => {localStorage.removeItem('accessToken');localStorage.removeItem('role');setAccessToken(false);setRole(false); navigate('/login')}}></Button>
+                            </Col>
+                        </Row>
+                    </div>
                 </div>
             ) : role === 'TEACHER' ? (
                 <div style={{flex: 1, display: 'flex'}}>
@@ -67,6 +77,16 @@ const Navbar = () => {
                         </Col>
 
                     </Row>
+                    </div>
+                    <div style={{display: 'flex', justifyContent: 'center', alignItems:'center'}}>
+                        <Row gutter={16}>
+                            <Col>
+                                <Typography.Text style={{color:'white', textAlign:'center', fontSize:'20px'}}>{fullName}</Typography.Text>
+                            </Col>
+                            <Col>
+                                <Button style={{borderRadius:'50px'}} onClick={() => {localStorage.removeItem('accessToken');localStorage.removeItem('role');setAccessToken(false);setRole(false); navigate('/login')}}><b>Log Out</b></Button>
+                            </Col>
+                        </Row>
                     </div>
 
                 </div>
@@ -90,19 +110,20 @@ const Navbar = () => {
 
                     </Row>
                     </div>
+                    <div style={{display: 'flex', justifyContent: 'center', alignItems:'center'}}>
+                        <Row gutter={16}>
+                            <Col>
+                                <Typography.Text style={{color:'white', textAlign:'center', fontSize:'20px'}}>{fullName}</Typography.Text>
+                            </Col>
+                            <Col>
+                                <Button style={{borderRadius:'50px'}} onClick={() => {localStorage.removeItem('accessToken');localStorage.removeItem('role');setAccessToken(false);setRole(false); navigate('/login')}}><b>Log Out</b></Button>
+                            </Col>
+                        </Row>
+                    </div>
 
                 </div>
             ) : null}
-            <div style={{display: 'flex', justifyContent: 'center', alignItems:'center'}}>
-                <Row gutter={16}>
-                    <Col>
-                        <Typography.Text style={{color:'white', textAlign:'center', fontSize:'20px'}}>{fullName}</Typography.Text>
-                    </Col>
-                    <Col>
-                        <Button style={{borderRadius:'50px'}} onClick={() => {localStorage.removeItem('accessToken');localStorage.removeItem('role');setAccessToken(false);setRole(false); navigate('/login')}}><b>Log Out</b></Button>
-                    </Col>
-                </Row>
-            </div>
+
         </nav>
     );
 };

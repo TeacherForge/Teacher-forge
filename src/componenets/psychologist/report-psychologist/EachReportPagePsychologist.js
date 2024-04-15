@@ -122,8 +122,7 @@ const EachReportPagePsychologist = () => {
         message: 'Success',
         description: 'Work time has been successfully added.',
       });
-      // Обновите состояние, чтобы отобразить новые данные
-      // setReport(...);
+
     } catch (error) {
       notification.error({
         message: 'Error',
