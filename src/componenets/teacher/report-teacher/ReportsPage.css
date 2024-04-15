@@ -3,6 +3,7 @@
     justify-content: flex-end;
     flex-direction: row;
     margin: 0;
+    padding-bottom: 40px;
     width: 100%;
     min-height: 100vh;
     background-image: url('/src/constant/image/background_teacher.svg');

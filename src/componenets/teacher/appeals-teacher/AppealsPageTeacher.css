@@ -9,7 +9,8 @@
     background-position: center center;
     background-repeat: no-repeat;
     overflow-x: hidden;
-
+    padding-bottom: 40px;
+    min-width: 1000px;
 }
 .appeals-container {
     margin-top: 2rem;
@@ -37,6 +38,10 @@
 .header-second{
     font-size: 20px;
     margin: 0 0 0 5rem;
+}
+
+.appeals-form{
+  padding: 40px;
 }
   
   

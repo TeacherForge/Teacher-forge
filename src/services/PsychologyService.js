@@ -17,7 +17,7 @@ class PsychologyService{
     };
     createPsychology(data){
         const accessToken = localStorage.getItem('accessToken');
-        return axios.post(Base_URL + `/admin/psychologist`,data, {
+        return axios.post(Base_URL + `/admin/users`,data, {
             headers: { Authorization: `Bearer ${accessToken}`}
         })
     }

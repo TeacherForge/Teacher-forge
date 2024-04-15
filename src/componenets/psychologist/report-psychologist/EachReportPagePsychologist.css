@@ -1,6 +1,6 @@
 .container-ABC{
     margin: auto 0;
-    padding: 50px 200px 0 200px;
+    padding: 50px 200px 40px 200px;
     min-width: 900px;
     display: flex;
     flex-direction: column;

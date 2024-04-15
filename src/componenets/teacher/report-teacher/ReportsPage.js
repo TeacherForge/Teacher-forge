@@ -21,7 +21,7 @@ const ReportsPage = () => {
   const accessToken = localStorage.getItem('accessToken');
   const [isOtherSelected, setIsOtherSelected] = useState(false);
   const [studentPhotos, setStudentPhotos] = useState({});
-
+  const [form] = Form.useForm();
 
 
   const handleViolationTypeChange = (value) => {
@@ -110,7 +110,8 @@ const ReportsPage = () => {
         notification.success({
           message: 'Report submitted successfully',
         });
-
+        form.resetFields();
+        documentIds = []; 
     } catch (error) {
       notification.error({
         message: 'Submission failed',
@@ -129,7 +130,7 @@ const ReportsPage = () => {
         {/* Include illustration here */}
       </div>
       <div className="form-container">
-      <Form layout="vertical" onFinish={onFinish}>
+      <Form layout="vertical" onFinish={onFinish} form={form}>
       <Form.Item name="studentId" label="Full name of student" rules={[{ required: true }]}>
         <Select
           showSearch

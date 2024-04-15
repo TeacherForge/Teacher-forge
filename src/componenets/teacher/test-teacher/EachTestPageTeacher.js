@@ -28,7 +28,7 @@ const EachTestPageTeacher = () => {
         if (response.data.details.photoIds && response.data.details.photoIds.length > 0) {
             fetchPhotoUrls(response.data.details.photoIds);
           } else {
-            setPhotoUrls([]); // Очистите URL-адреса, если у вопроса нет прикрепленных фото
+            setPhotoUrls([]); 
           }
       } catch (error) {
         notification.error({ message: 'Failed to load question data.' });
@@ -64,12 +64,11 @@ const EachTestPageTeacher = () => {
       });
 
       notification.success({ message: 'Response saved!' });
-      // Move to next question if there is one
+  
       if (questionNum < questionCount) {
         setCurrentQuestion(questionNum + 1);
       } else {
-        // If it was the last question, you can call finishTest here or leave it to the user to decide
-        // finishTest();
+
       }
     } catch (error) {
       notification.error({ message: 'Failed to save response.' });
@@ -78,34 +77,41 @@ const EachTestPageTeacher = () => {
     }
   };
 
-  // Handle finishing the test
+
   const finishTest = async () => {
+
     setSubmitting(true);
+    try {
+      await submitResponse(questionNumber);
+    } catch (error) {
+      notification.error({ message: 'Failed to save the last response.' });
+      setSubmitting(false);
+      return;
+    }
+
     try {
       await axios.put(`${Base_URL}/client/tests/${id}/finish`, {}, {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
       notification.success({ message: 'Test finished successfully!' });
-      navigate('/tests');
+      navigate('/test-teacher');
     } catch (error) {
       notification.error({ message: 'Failed to finish the test.' });
     } finally {
       setSubmitting(false);
     }
   };
+  
 
 
   const onAnswerChange = (e, questionType) => {
     let answerValue;
     
     if (questionType === 'MULTIPLE_CHOICE') {
-      // Checkbox.Group provides an array of checked values
       answerValue = e;
     } else if (questionType === 'SINGLE_CHOICE') {
-      // Even though Radio.Group provides a single value, we wrap it in an array
       answerValue = [e.target.value];
     } else {
-      // Text input for OPEN questions is stored as an array with a single string
       answerValue = [e.target.value];
     }
   
@@ -181,7 +187,7 @@ const EachTestPageTeacher = () => {
               type="primary"
               onClick={() => submitResponse(currentQuestion)}
               disabled={submitting}
-              style={{backgroundColor:'#48B813'}}
+              style={{backgroundColor:'#48B813', marginTop:20}}
             >
               Save Answer
             </Button>
@@ -192,7 +198,7 @@ const EachTestPageTeacher = () => {
               type="primary"
               onClick={finishTest}
               disabled={submitting || Object.keys(responses).length < questionNumber}
-              style={{backgroundColor:'#64B5D7', color:'white'}}
+              style={{backgroundColor:'#64B5D7', color:'white',marginTop:20}}
             >
               Finish Test
             </Button>

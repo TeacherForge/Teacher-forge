@@ -11,30 +11,42 @@ import RegionService from "../../../services/RegionService";
 
 const jsonTypes = [
     {
-        value: 'General',
+        value: 'GENERAL',
         name: 'General'
     },
     {
-        value: 'Lyceums',
+        value: 'LYCEUMS',
         name: 'Lyceums'
     },
     {
-        value: 'Gymnasium',
+        value: 'GYMNASIUMS',
         name: 'Gymnasium'
+    },
+    {
+        value: 'INTERNATIONAL',
+        name: 'International'
+    },
+    {
+        value: 'SPECIALIZED',
+        name: 'Specialized'
+    },
+    {
+        value: 'BOARDING',
+        name: 'Boarding'
     }
 ]
 
 const jsonStatus = [
     {
-        value: 'State',
+        value: 'STATE',
         name: 'State'
     },
     {
-        value: 'Municipal',
+        value: 'MUNICIPAL',
         name: 'Municipal'
     },
     {
-        value: 'Private',
+        value: 'PRIVATE',
         name: 'Private'
     }
 ];
@@ -75,10 +87,19 @@ const SchoolsPage = () => {
     const [dataRegion, setDataRegion] = useState([]);
     const [regionId, setRegionId] = useState(null);
     const [search, setSearch] = useState(null);
-
+    const [typeFilter, setTypeFilter] = useState(null);
+    const [statusFilter, setStatusFilter] = useState(null);
     const [open, setOpen] = useState(false);
 
-
+    const resetFilters = () => {
+        setRegionId(null);
+        setTypeFilter(null);
+        setStatusFilter(null);
+        setSearch(null);
+        listSchools();
+        setSearch(null);
+    };
+    
 
     useEffect(() => {
         getRegions();
@@ -91,14 +112,22 @@ const SchoolsPage = () => {
     }
 
     useEffect(() => {
-       listSchools();
-    },[open])
-
+        listSchools();
+     }, [regionId, typeFilter, statusFilter, open, search]); 
+     
     const listSchools = async () => {
-        await SchoolsService.getSchools().then((res) => {
+        const data = {
+            regionId: regionId,
+            type: typeFilter,
+            status: statusFilter,
+            name: search
+        };
+    
+        await SchoolsService.getSchools(data).then((res) => {
             setData(res.data);
         });
     }
+    
 
     const toggleList = (setOpen, open) => {
         setOpen(!open);
@@ -119,6 +148,11 @@ const SchoolsPage = () => {
             <Row gutter={36} style={{marginTop: '30px'}}>
                 <Col xs={6}>
                     <Card>
+                    <Col>
+                        <Button type="default" style={{ borderRadius: '20px', width: '100px'}} onClick={resetFilters}>
+                            Reset Filters
+                        </Button>
+                    </Col>
                         <Typography.Title level={4}>Schools</Typography.Title>
                         <div style={{marginLeft:'15px'}}>
                             <div style={{marginTop:'15px'}}>
@@ -145,12 +179,10 @@ const SchoolsPage = () => {
                                     {isOpenTypes ? <CaretDownOutlined/> : <CaretRightOutlined/>}
                                 </div>
                                 {isOpenTypes && (
-                                    <Radio.Group>
-                                        <Space direction="vertical" style={{marginLeft:'18px'}}>
-                                            {jsonTypes.map((item) => (
-                                                <Radio value={item.value}>{item.name}</Radio>
-                                            ))}
-                                        </Space>
+                                    <Radio.Group onChange={(e) => setTypeFilter(e.target.value)}>
+                                    {jsonTypes.map((item) => (
+                                        <Radio value={item.value}>{item.name}</Radio>
+                                    ))}
                                     </Radio.Group>
                                 )}
                             </div>
@@ -161,12 +193,10 @@ const SchoolsPage = () => {
                                     {isOpenStatus ? <CaretDownOutlined/> : <CaretRightOutlined/>}
                                 </div>
                                 {isOpenStatus && (
-                                    <Radio.Group>
-                                        <Space direction="vertical" style={{marginLeft:'18px'}}>
-                                            {jsonStatus.map((item) => (
-                                                <Radio value={item.value}>{item.name}</Radio>
-                                            ))}
-                                        </Space>
+                                    <Radio.Group onChange={(e) => setStatusFilter(e.target.value)}>
+                                    {jsonStatus.map((item) => (
+                                        <Radio value={item.value}>{item.name}</Radio>
+                                    ))}
                                     </Radio.Group>
                                 )}
                             </div>

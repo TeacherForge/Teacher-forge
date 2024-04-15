@@ -58,7 +58,7 @@ function App() {
                         <Route path='/test-teacher' element={<TestPageTeacher />} />
                         <Route path='/test-teacher/:id/:questionCount' element={<EachTestPageTeacher />} />
                         <Route path='/appeals' element={<ComponentWithMargin><AppealsPage /></ComponentWithMargin>} />
-                        <Route path='/appeals-read' element={<ReadAppealsPage/>} />
+                        <Route path='/appeals-read/:id' element={<ReadAppealsPage/>} />
                         {/* Другие маршруты */}
                     </Routes>
                     {<Footer/>}

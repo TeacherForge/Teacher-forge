@@ -1,6 +1,6 @@
 .reports-page-container {
   margin: auto 0;
-  padding: auto 0;
+  padding: 0 0 40px 0;
   width: 100%;
   display: flex;
   flex-direction: column;

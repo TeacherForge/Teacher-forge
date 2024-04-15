@@ -2,13 +2,16 @@ import axios from "axios";
 import {Base_URL} from "../constant";
 
 class SchoolService{
-    getSchools(){
+    getSchools(data){
         const accessToken = localStorage.getItem('accessToken');
-        return axios.get(Base_URL + '/admin/schools', {
-            headers: { Authorization: `Bearer ${accessToken}`}
-        })
+        const config = {
+            headers: { Authorization: `Bearer ${accessToken}` },
+            params: data
+        };
 
-    };
+        return axios.get(Base_URL + '/admin/schools', config);
+    }
+    
 
     getSchoolsById(id){
         const accessToken = localStorage.getItem('accessToken');

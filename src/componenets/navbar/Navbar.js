@@ -6,6 +6,7 @@ import logowhite from '../../constant/image/logowhite.svg'
 import {Button, Col, Row, Typography} from "antd";
 import {UserContext, useUserContext} from "../../App";
 import {createContext, useContext, useEffect, useState} from 'react';
+import shiro from '../../constant/image/icons/shiro.png'
 
 const Navbar = () => {
     const getColor = () => {

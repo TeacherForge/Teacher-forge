@@ -2,6 +2,10 @@ import React from 'react';
 import { Form, Input, DatePicker, TimePicker, Button, Upload, Typography } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import './AppealsPageTeacher.css';
+import { uploadFile } from '../../../services/UploadFileService';
+import {notification} from "antd";
+import axios from "axios";
+import {Base_URL} from "../../../constant";
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -9,19 +13,35 @@ const { Title } = Typography;
 const AppealsPageTeacher = () => {
   const [form] = Form.useForm();
 
-  const onFinish = (values) => {
-    console.log('Received values of form: ', values);
-    // Здесь код для отправки данных формы, например, через запрос к API
+  const onFinish = async (values) => {
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+        const response = await axios.post(`${Base_URL}/client/appeals`,values, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        
+        });
+        form.resetFields(); 
+      } catch (error) {}
   };
 
-  // Функция для нормализации значений поля файлов
-  const normFile = (e) => {
-    if (Array.isArray(e)) {
-      return e;
+  let documentIds = [];
+  const handleUpload = async (file) => {
+    try {
+      const uploadedFileId = await uploadFile(file);
+      documentIds.push(uploadedFileId);
+      return documentIds; 
+    } catch (error) {
+      notification.error({
+        message: 'Upload Error',
+        description: 'There was an error uploading the file.',
+      });
     }
-    return e && e.fileList;
   };
 
+
+  
   return (
     <div className='appeals'>
     <div className='appeals-header'>
@@ -37,67 +57,45 @@ const AppealsPageTeacher = () => {
         className="appeals-form"
       >
         <Form.Item
-          name="name"
-          label="Name of people"
-          rules={[{ required: true, message: 'Please input the name!' }]}
+          name="topic"
+          rules={[{ required: true, message: 'Please input the topic!' }]}
         >
-          <Input placeholder="Enter name" />
+          <Input placeholder="Enter topic" />
         </Form.Item>
 
         <Form.Item
-          name="date"
-          label="Date"
-          rules={[{ type: 'object', required: true, message: 'Please select date!' }]}
+          name="text"
         >
-          <DatePicker style={{ width: '100%' }} />
+          <TextArea placeholder="Write your situation" style={{minHeight:200}}/>
         </Form.Item>
 
         <Form.Item
-          name="time"
-          label="Time"
-          rules={[{ type: 'object', required: true, message: 'Please select time!' }]}
+        name="attachment"
+        label="Attach a file"
+        extra="PDF, PNG, JPEG no more than 5 MB"
+      >
+        <Upload
+          multiple
+          beforeUpload={(file) => {
+            handleUpload(file); 
+            return false; 
+          }}
         >
-          <TimePicker style={{ width: '100%' }} />
-        </Form.Item>
-
-        <Form.Item
-          name="schoolName"
-          label="School name"
-        >
-          <Input placeholder="Enter school name" />
-        </Form.Item>
-
-        <Form.Item
-          name="regionName"
-          label="Region name"
-        >
-          <Input placeholder="Enter region name" />
-        </Form.Item>
-
-        <Form.Item
-          name="comment"
-          label="Comment (optional)"
-        >
-          <TextArea placeholder="Add a comment" />
-        </Form.Item>
-
-        <Form.Item
-          name="attachment"
-          label="Attach a file"
-          valuePropName="fileList"
-          getValueFromEvent={normFile}
-          extra="PDF, PNG, JPEG no more than 5 MB"
-        >
-          <Upload action="/upload" listType="picture">
-            <Button icon={<UploadOutlined />}>Click to upload</Button>
-          </Upload>
-        </Form.Item>
+          <Button icon={<UploadOutlined />}>Click to upload</Button>
+        </Upload>
+      </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType='reset'>
+          <Button type="primary" htmlType='submit'>
             Submit
           </Button>
         </Form.Item>
+        <Form.Item>
+          <Button type="default" htmlType='reset'>
+            Reset
+          </Button>
+        </Form.Item>
+        
       </Form>
     </div>
     </div>
