@@ -6,6 +6,7 @@
 }
 .layout{
     overflow: hidden;
-    max-width: 100%; 
+    max-width: 100%;
+    min-width: 1000px; 
     max-height: 600px;
 }
