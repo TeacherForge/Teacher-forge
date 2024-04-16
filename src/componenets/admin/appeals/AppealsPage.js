@@ -1,12 +1,9 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card,Table, Input, Button, Space, Modal, notification,Typography, Pagination ,Col, Row,Select} from 'antd';
+import { Card, Input, Button, Space, Modal, notification,Typography, Pagination ,Col, Row,Select} from 'antd';
 import {
     DeleteIcon,
-    FiltrationIcon,
-    LetterIcon,
-    OpenLetterIcon,
     UpdateIcon
 } from "../../../constant/image/icons/Index.";
 import axios from 'axios';
@@ -159,12 +156,6 @@ const AppealsPage = () => {
         paddingLeft:'15px'
     };
 
-    const styleDivider = {
-        borderLeft: '1px solid #909090',
-        height: '40px'
-    };
-
-
     return (
         <>
             <Typography.Title level={2}>Mail for appeals</Typography.Title>
@@ -175,6 +166,7 @@ const AppealsPage = () => {
                 style={{width: 600, borderRadius: 50, margin:'5px 0 10px 0'}}
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
+                onSearch={handleSearch}
                 placeholder="Search..."
                 />
 

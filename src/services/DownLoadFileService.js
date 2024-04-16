@@ -15,15 +15,8 @@ export const downloadFile = async (fileId) => {
     let filename = '';
     const contentDisposition = response.headers['content-disposition'];
     if (contentDisposition) {
-      const filenameRegex = /filename\*=UTF-8''(.+)$/i;
-      const matches = contentDisposition.match(filenameRegex);
-      if (matches && matches[1]) {
-        filename = decodeURIComponent(matches[1]);
-      } else {
-        const filenameRegexFallback = /filename="([^"]+)"/i;
-        const matchesFallback = contentDisposition.match(filenameRegexFallback);
-        filename = matchesFallback && matchesFallback[1] ? matchesFallback[1] : 'download';
-      }
+      const matches = contentDisposition.match(/filename="([^"]+)"/i);
+      filename = matches[1] || 'download';
     }
 
     const blob = new Blob([response.data]);

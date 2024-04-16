@@ -1,7 +1,7 @@
 import './App.css';
 import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
 import LoginPage from './componenets/login/LoginPage';
-import {createContext, useContext, useEffect, useState} from 'react';
+import {createContext, useContext, useState} from 'react';
 import Navbar from './componenets/navbar/Navbar';
 import Footer from './componenets/footer/Footer';
 import SchoolsPage from "./componenets/admin/schools/SchoolsPage";

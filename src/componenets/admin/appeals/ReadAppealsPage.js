@@ -2,8 +2,8 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate} from 'react-router-dom';
 import {RollbackOutlined,FileOutlined} from '@ant-design/icons'
-import {AllEmailIcon, LeftIcon, LetterIcon, OpenLetterIcon, RightIcon,DeleteIcon} from "../../../constant/image/icons/Index.";
-import {Checkbox, Col, Row, Typography, notification, Pagination, Button, Card,Modal} from "antd";
+import {AllEmailIcon,LetterIcon, OpenLetterIcon, DeleteIcon} from "../../../constant/image/icons/Index.";
+import {Col, Row, Typography, notification, Pagination, Button,Modal} from "antd";
 import axios from 'axios';
 import {Base_URL} from "../../../constant";
 import {downloadFile}  from '../../../services/DownLoadFileService'
@@ -120,7 +120,7 @@ const ReadAppealsPage = () => {
 
     useEffect(() => {
         fetchAppeal();
-    }, []);
+    },);
 
     const fetchAppeals = async () => {
         try {

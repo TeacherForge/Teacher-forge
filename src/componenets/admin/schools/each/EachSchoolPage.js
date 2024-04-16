@@ -25,18 +25,10 @@ const EachSchoolPage = () => {
     const [type,setType] = useState(null);
     const [status,setStatus] = useState(null);
     const [domain,setDomain] = useState(null);
-    const [data, setData] = useState([]);
 
 
-    useEffect(() => {
-        getRegions();
-    },[])
 
-    const getRegions = async () => {
-        await RegionService.getRegions().then((responce) => {
-            setData(responce.data);
-        });
-    }
+
 
 
     const onChange = (key) => {
