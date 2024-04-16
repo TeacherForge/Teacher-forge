@@ -5,7 +5,7 @@ import { useParams, useNavigate} from 'react-router-dom';
 import { Table, notification} from 'antd';
 import './CreateTestPagePsychologist.css'
 const EachTestPagePsychologist = () => {
-  const {id} = useParams();
+  const {id, questionCount} = useParams();
   const accessToken = localStorage.getItem('accessToken')
   const [testResults, setTestResults] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -51,7 +51,7 @@ const EachTestPagePsychologist = () => {
 const onRowClick = (test) => {
     return {
       onClick: () => {
-          navigate(`/test-psychologist/${id}/teacher/${test.teacherId}`);
+          navigate(`/test-psychologist/${id}/teacher/${test.teacherId}/${questionCount}`);
       },
     };
   };

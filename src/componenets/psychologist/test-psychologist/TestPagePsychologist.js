@@ -11,10 +11,9 @@ const { Title } = Typography;
 const { Option } = Select;
 
 const TestsPagePsychologist = () => {
-  // Здесь должен быть ваш стейт и функции для обработки данных, которые обычно вы получаете с бэкенда
   const accessToken = localStorage.getItem('accessToken');
   const id = localStorage.getItem('id');
-  const [tests, setTests] = useState([]); // Данные тестов, предположительно, будут загружены из API
+  const [tests, setTests] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [teachers, setTeachers] = useState([]);
@@ -148,7 +147,7 @@ const TestsPagePsychologist = () => {
         if (test.testStatus === 'DRAW') {
           navigate(`/test-psychologist/${test.id}/create`);
         } else {
-          navigate(`/test-psychologist/${test.id}`);
+          navigate(`/test-psychologist/${test.id}/${test.questionCount}`);
         }
       },
     };

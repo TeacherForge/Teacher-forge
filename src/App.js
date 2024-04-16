@@ -51,8 +51,8 @@ function App() {
                         <Route path='/report-psychologist' element={<ReportsPagePsychologist />}/>
                         <Route path='/psychologist/students/:studentId' element={<EachStudentPagePsychologist />} />
                         <Route path='/test-psychologist' element={<TestPagePsychologist />}/>
-                        <Route path='/test-psychologist/:id' element={<EachTestPagePsychologist />}/>
-                        <Route path='/test-psychologist/:id/teacher/:teacherId' element={<CheckTestPagePsychologist />}/>
+                        <Route path='/test-psychologist/:id/:questionCount' element={<EachTestPagePsychologist />}/>
+                        <Route path='/test-psychologist/:id/teacher/:teacherId/:questionCount' element={<CheckTestPagePsychologist />}/>
                         <Route path='/test-psychologist/:id/create' element={<CreateTestPagePsychologist />}/>
                         <Route path='/report/:id' element={<EachReportPagePsychologist />} />
                         <Route path='/appeals-psychologist' element={<AppealsPagePsychologist />} />
