@@ -120,7 +120,7 @@ const ReadAppealsPage = () => {
 
     useEffect(() => {
         fetchAppeal();
-    },);
+    }, []);
 
     const fetchAppeals = async () => {
         try {
