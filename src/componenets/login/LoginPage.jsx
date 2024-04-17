@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './index.css';
 import logo from '../../constant/image/logoblue.svg';
-import { Button, Card, Checkbox, Col, Form, Input, Row, Space, Typography } from 'antd';
+import { Button, Card, Checkbox, Col, Form, Input, Row, Typography, notification } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import { login, loginOTP } from '../../services/LoginService';
 import { useUserContext } from "../../App";
@@ -13,26 +13,83 @@ const LoginPage = () => {
     const [form] = useForm();
     const [step, setStep] = useState(0);
     const [loginName, setLoginName] = useState('');
+    const [password, setPassword] = useState('');
     const [remember, setRememberMe] = useState(false);
-    const { setAccessToken} = useUserContext();
+    const [secondsRemaining, setSecondsRemaining] = useState(60);
+    const { setAccessToken } = useUserContext();
     const navigate = useNavigate();
+    const [timerActive, setTimerActive] = useState(false);
+
+    useEffect(() => {
+        const timerStart = localStorage.getItem('timerStart');
+        const timerLogin = localStorage.getItem('timerLogin');
+
+        if (timerStart && timerLogin) {
+            const timePassed = Math.floor((Date.now() - new Date(timerStart).getTime()) / 1000);
+            if (timePassed < 60) {
+                setSecondsRemaining(60 - timePassed);
+                setTimeout(() => {
+                    localStorage.removeItem('timerStart');
+                    localStorage.removeItem('timerLogin');
+                    setSecondsRemaining(60);
+                }, (60 - timePassed) * 1000);
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        let interval;
+        if (timerActive && secondsRemaining > 0) {
+            interval = setInterval(() => {
+                setSecondsRemaining(seconds => seconds - 1);
+            }, 1000);
+        } else if (secondsRemaining <= 0) {
+            setTimerActive(false);
+            setSecondsRemaining(60);
+        }
+        return () => clearInterval(interval);
+    }, [timerActive, secondsRemaining]);
+
+    const handleLoginAttempt = async (values) => {
+        const timerLogin = localStorage.getItem('timerLogin');
+        if (timerLogin === values.email) {
+            const timePassed = Math.floor((Date.now() - new Date(localStorage.getItem('timerStart')).getTime()) / 1000);
+            if (timePassed < 60) {
+                notification.info({
+                    message: 'Please wait',
+                    description: `You can try logging in again in ${60 - timePassed} seconds.`
+                });
+                return;
+            }
+        }
+
+        try {
+            await login({ email: values.email, password: values.password });
+            console.log('Login request sent successfully.');
+            localStorage.setItem('timerStart', new Date().toISOString());
+            localStorage.setItem('timerLogin', values.email);
+            setLoginName(values.email);
+            setPassword(values.password);
+            setTimerActive(true);
+            setStep(1);
+        } catch (error) {
+            notification.error({
+                message: 'Error',
+                description: 'Failed to send login request. Please try again.'
+            });
+        }
+    };
 
     const onFinish = async (values) => {
         if (step === 0) {
-            await login({email: values.email, password: values.password})
-                .then(() => {
-                    setLoginName(values.email);
-                    setStep(1); // Переходим ко второму шагу после успешного первого
-                });
+            handleLoginAttempt(values);
         } else if (step === 1) {
-            const data = {
+            await loginOTP({
                 email: loginName,
-                rememberMe: remember, // Передаем сохраненное состояние чекбокса "Запомнить меня"
+                rememberMe: remember,
                 code: values.code
-            };
-            await loginOTP(data, setAccessToken).then(() => {
+            }, setAccessToken).then(() => {
                 const role = localStorage.getItem('role');
-                const accessToken = localStorage.getItem('accessToken');
                 const getHomePagePath = () => {
                     switch (role) {
                         case 'ADMIN': return '/schools';
@@ -41,10 +98,24 @@ const LoginPage = () => {
                         default: return '/login';
                     }
                 };
-                navigate(getHomePagePath(role)); // Навигация на домашнюю страницу в зависимости от роли
+                navigate(getHomePagePath());
             });
         }
     };
+
+    const resendCode = async () => {
+        try {
+            await login({ email: loginName, password: password});
+            console.log('Code resent successfully.');
+        } catch (error) {
+            notification.error({
+                message: 'Error',
+                description: 'Failed to resend the code. Please try again.'
+            });
+        }
+    };
+
+    
 
     return (
         <div className="layout">
@@ -104,6 +175,9 @@ const LoginPage = () => {
                                     >
                                         <Input maxLength={6} />
                                     </Form.Item>
+                                    <Button onClick={() => resendCode()} style={{ float: 'right' }} disabled={timerActive}>
+                                        Send again? ({secondsRemaining}s)
+                                    </Button>
                                     <Form.Item>
                                         <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
                                             Check
