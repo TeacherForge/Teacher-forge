@@ -1,7 +1,6 @@
 import axios from "axios";
 import {Base_URL} from "../constant";
 import {notification} from "antd";
-import {useNavigate} from 'react-router-dom';
 
 export const login = async (data) => {
     await axios.post(Base_URL + '/auth/email/send', data)
