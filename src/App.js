@@ -1,7 +1,7 @@
 import './App.css';
-import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './componenets/login/LoginPage';
-import {createContext, useContext, useState} from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import Navbar from './componenets/navbar/Navbar';
 import Footer from './componenets/footer/Footer';
 import SchoolsPage from "./componenets/admin/schools/SchoolsPage";
@@ -22,11 +22,34 @@ import EachTestPageTeacher from './componenets/teacher/test-teacher/EachTestPage
 import ReadAppealsPage from "./componenets/admin/appeals/ReadAppealsPage";
 import AppealsPage from "./componenets/admin/appeals/AppealsPage";
 
-
 function App() {
     const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken'));
     const [role, setRole] = useState(localStorage.getItem('role'));
-    
+    const [authTime] = useState(localStorage.getItem('authTime'));
+
+   {/*} useEffect(() => {
+        if (accessToken) {
+            console.log("Время пошло");
+            if (authTime) {
+                const oneHour = 5 * 1000; // 1 час в миллисекундах
+                const elapsedTime = Date.now() - new Date(authTime).getTime();
+                console.log(Date.now() - new Date(authTime).getTime());
+                if (elapsedTime > oneHour) {
+                    console.log("ЩА выкинет");
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('role');
+                    setAccessToken(null);
+                    setRole(null);
+                    window.location.reload();
+                    window.location.href = '/login';
+                }
+            } else {
+                setAccessToken(null);
+                setRole(null);
+            }
+        }
+    }, []);*/}
+
     const getHomePagePath = () => {
         switch (role) {
             case 'ADMIN': return '/schools';

@@ -3,21 +3,20 @@ import {Base_URL} from "../constant";
 import {notification} from "antd";
 
 export const login = async (data) => {
-    await axios.post(Base_URL + '/auth/email/send', data)
-        .then((response) => {
-            if (response.data) {
-                notification.success({
-                    message: 'You have successfully logged in'
-                })
-            }
-        })
-        .catch((error) => {
-            notification.error({
-                message: error
-            })
-        });
-}
+    try {
+        const response = await axios.post(`${Base_URL}/auth/email/send`, data);
+        if (response.status === 200) {
+            return response;
+        } else {
+            throw new Error(`Received status code: ${response.status}`);
+        }
+    } catch (error) {
+        throw error; 
+    }
+};
+
 export const loginOTP = async (data,setAccessToken) => {
+    try{
     await axios.post(Base_URL + '/auth/email/otp', data)
         .then((response) => {
             if (response.data) {
@@ -31,11 +30,9 @@ export const loginOTP = async (data,setAccessToken) => {
                     message: 'You have successfully logged in',
                 })
             }
-        })
-        .catch((error) => {
-            notification.error({
-                message: error
-            })
-        });
+        })}
+        catch {
+
+        };
 }
 

@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 const { Title, Text } = Typography;
 
 const LoginPage = () => {
+    const [code, setCode] = useState(Array(6).fill(''));
     const [form] = useForm();
     const [step, setStep] = useState(0);
     const [loginName, setLoginName] = useState('');
@@ -19,6 +20,42 @@ const LoginPage = () => {
     const { setAccessToken } = useUserContext();
     const navigate = useNavigate();
     const [timerActive, setTimerActive] = useState(false);
+    const [inputsRef, setInputsRef] = useState([]);
+    
+    useEffect(() => {
+        // Устанавливаем массив refs
+        setInputsRef((refs) =>
+          Array(6)
+            .fill()
+            .map((_, i) => refs[i] || React.createRef())
+        );
+      }, []);
+      
+      const onCodeChange = (index) => (e) => {
+        const newCode = [...code];
+        newCode[index] = e.target.value;
+        setCode(newCode);
+      
+        // Перемещаем фокус на следующий инпут, если текущий заполнен
+        if (e.target.value && index < 5) {
+          inputsRef[index + 1].current.focus();
+        }
+      };
+
+      const getCodeValue = () => {
+        return code.join('');
+      };
+
+      const handleKeyDown = (index) => (e) => {
+        if (e.key === 'Backspace' && index > 0 && !code[index]) {
+          // Удаление символа и перемещение фокуса на предыдущий инпут
+          const newCode = [...code];
+          newCode[index - 1] = '';
+          setCode(newCode);
+          inputsRef[index - 1].current.focus();
+        }
+      };
+      
 
     useEffect(() => {
         const timerStart = localStorage.getItem('timerStart');
@@ -62,24 +99,24 @@ const LoginPage = () => {
                 return;
             }
         }
-
         try {
-            await login({ email: values.email, password: values.password });
-            console.log('Login request sent successfully.');
-            localStorage.setItem('timerStart', new Date().toISOString());
-            localStorage.setItem('timerLogin', values.email);
-            setLoginName(values.email);
-            setPassword(values.password);
-            setTimerActive(true);
-            setStep(1);
-        } catch (error) {
+            const response = await login({ email: values.email, password: values.password });
+            if (response && response.status === 200) {
+              console.log('Login request sent successfully.');
+              localStorage.setItem('timerStart', new Date().toISOString());
+              localStorage.setItem('timerLogin', values.email);
+              setLoginName(values.email);
+              setPassword(values.password);
+              setTimerActive(true);
+              setStep(1);
+            }
+          } catch (error) {
             notification.error({
-                message: 'Error',
-                description: 'Failed to send login request. Please try again.'
+              message: 'Login Error',
             });
-        }
-    };
-
+          }
+        };
+    const fullCode = getCodeValue();
     const onFinish = async (values) => {
         if (step === 0) {
             handleLoginAttempt(values);
@@ -87,8 +124,9 @@ const LoginPage = () => {
             await loginOTP({
                 email: loginName,
                 rememberMe: remember,
-                code: values.code
-            }, setAccessToken).then(() => {
+                code: fullCode
+            }, setAccessToken,
+            localStorage.setItem('authTime', new Date().toISOString())).then(() => {
                 const role = localStorage.getItem('role');
                 const getHomePagePath = () => {
                     switch (role) {
@@ -130,7 +168,10 @@ const LoginPage = () => {
                 </Col>
                 <Col xs={24} md={12} style={{ alignItems: 'center' }}>
                     <Card className="container">
-                        <img src={logo} alt="logo" style={{ width: '50%', height: '50%' }} />
+                        <Row style={{width:'100%', display:'flex', flexDirection:'row', justifyContent:'center'}}>
+                            <img src={logo} alt="logo" style={{ width: '50%', height: '50%' }} />
+                        </Row>
+                        
                         <Form
                             name="basic"
                             form={form}
@@ -170,14 +211,31 @@ const LoginPage = () => {
                                     <Form.Item
                                         label="Write code:"
                                         name="code"
-                                        style={{width:100}}
+                                        style={{width:"100%", marginTop:'50px'}}
                                         rules={[{ required: true, message: 'Please input the code from the email!' }]}
                                     >
-                                        <Input maxLength={6} />
+                                        <Row style={{justifyContent:'space-between'}}>
+                                        {code.map((digit, index) => (
+                                            <Col key={index}>
+                                            <Input
+                                                maxLength={1}
+                                                onChange={onCodeChange(index)}
+                                                onKeyDown={handleKeyDown(index)}
+                                                value={digit}
+                                                ref={inputsRef[index]}
+                                                style={{ width: 35, height: 40, textAlign: 'center' }}
+                                            />
+                                            </Col>
+                                        ))}
+                                        </Row>
+                                        
+                                        
                                     </Form.Item>
-                                    <Button onClick={() => resendCode()} style={{ float: 'right' }} disabled={timerActive}>
-                                        Send again? ({secondsRemaining}s)
-                                    </Button>
+                                    <Form.Item>
+                                        <Button onClick={() => resendCode()} style={{border:0 , backgroundColor:'white'}} disabled={timerActive}>
+                                            Send again? ({secondsRemaining}s)
+                                        </Button>
+                                    </Form.Item>
                                     <Form.Item>
                                         <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
                                             Check
