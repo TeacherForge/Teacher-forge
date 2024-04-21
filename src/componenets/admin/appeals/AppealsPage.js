@@ -149,7 +149,7 @@ const AppealsPage = () => {
         borderBottomRightRadius: '20px',
         boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)',
         width: '100%',
-        height: '50px',
+        minHeight: '50px',
         padding: '4px',
         marginTop:'10px',
         fontSize:'13px',
@@ -228,7 +228,7 @@ const AppealsPage = () => {
                     </Col>   
                     <Col style={{width:'20%'}} onClick={() => onRowClick(appeal)}>
                         <Row>
-                            <b><p style={{padding:0, margin:0}}>{appeal.createdFullName} {appeal.schoolName}</p></b>
+                            <b><p style={{padding:0, margin:0}}>{appeal.createdFullName}, {appeal.schoolName}</p></b>
                         </Row>
                         <Row>
                             <p style={{padding:0, margin:0}}>{appeal.schoolAddress}</p>

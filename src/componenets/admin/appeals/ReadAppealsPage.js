@@ -34,7 +34,7 @@ const ReadAppealsPage = () => {
         borderBottomRightRadius: '20px',
         boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)',
         width: '100%',
-        height: '50px',
+        minHeight: '50px',
         padding: '4px',
         marginTop:'10px',
         fontSize:'13px',
@@ -280,8 +280,8 @@ const ReadAppealsPage = () => {
                     <Row key={appeal.id} style={getRowStyle(appeal)} onClick={() => onRowClick(appeal)}>
                     <Col style={{width:'90%'}}>
                         <Row>
-                            <Col style={{width:'75%'}}><b><p style={{padding:0, margin:0}}>
-                                {appeal.createdFullName} {appeal.schoolName} 
+                            <Col style={{width:'75%'}}><b><p style={{paddingRight:5, margin:0}}>
+                                {appeal.createdFullName}, {appeal.schoolName} 
                                 </p></b>
                             </Col>
                             <Col style={{width:'25%'}}>
@@ -289,7 +289,7 @@ const ReadAppealsPage = () => {
                             </Col>
                         </Row>
                         <Row>
-                            <Col style={{fontSize:'10px', width:'25%', display:'flex', flexDirection:'row', alignItems:'center'}}>{appeal.schoolAddress}</Col>
+                            <Col style={{fontSize:'10px', width:'25%', display:'flex', flexDirection:'row', alignItems:'center', paddingRight:5}}>{appeal.schoolAddress}</Col>
                             <Col style={{width:'75%', height:20, overflow:'hidden'}}><b>{appeal.topic}</b> {appeal.text}</Col>
                         </Row>
                     </Col>

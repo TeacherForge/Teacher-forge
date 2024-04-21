@@ -78,12 +78,10 @@ const CreateTestPage = () => {
       question: question.details.question,
       answers: question.details.answers?.map(answer => ({ answer })),
     });
-    
-    // Вызовите fetchPhotoUrls, если у вопроса есть photoIds
     if (question.details.photoIds && question.details.photoIds.length > 0) {
       fetchPhotoUrls(question.details.photoIds);
     } else {
-      setPhotoUrls([]); // Очистите URL-адреса, если у вопроса нет прикрепленных фото
+      setPhotoUrls([]); 
     }
   };
   
@@ -103,7 +101,7 @@ const CreateTestPage = () => {
       notification.success({
         message: 'Тест завершён и отправлен'
       });
-      navigate('/tests');
+      navigate('/test-psychologist');
     } catch (error) {
       notification.error({
         message: 'Ошибка завершения теста',
@@ -159,14 +157,13 @@ const CreateTestPage = () => {
   };
 
   const onFinish = async (values) => {
-    // Структурируем данные в формате, ожидаемом бэкендом
     const questionData = {
       testId: id,
       questionType: values.questionType,
       details: {
-        photoIds: documentIds, // Используем сохраненные ID загруженных файлов
+        photoIds: documentIds,
         question: values.question,
-        answers: values.answers ? values.answers.map((item) => item.answer) : [] // Маппим только ответы для сохранения
+        answers: values.answers ? values.answers.map((item) => item.answer) : [] 
       },
       number: selectedQuestion ? selectedQuestion.number : numberOfQuestion
     };
