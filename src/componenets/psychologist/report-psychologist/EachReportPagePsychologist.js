@@ -107,7 +107,7 @@ const EachReportPagePsychologist = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:8080/api/v1/psychologist/reports/${id}/work-times`, 
+        `${Base_URL}/psychologist/reports/${id}/work-times`, 
         {
           title: newWork.title,
           description: newWork.description,
@@ -122,7 +122,7 @@ const EachReportPagePsychologist = () => {
         message: 'Success',
         description: 'Work time has been successfully added.',
       });
-
+      window.location.reload();
     } catch (error) {
       notification.error({
         message: 'Error',
@@ -268,7 +268,7 @@ const EachReportPagePsychologist = () => {
                 return (
                   <div key={index} className="file-item">
                     <a href={file.downloadUrl} download={file.filename}>
-                      <Button style={{border:0}} icon={<FileOutlined style={{color:'#0085FF'}}/>} size="small">{file.filename}</Button>
+                      <Button style={{border:0}} icon={<FileOutlined style={{color:'#0085FF',border:0}}/>} size="small">{file.filename}</Button>
                     </a>
                   </div>
                 );
@@ -320,9 +320,9 @@ const EachReportPagePsychologist = () => {
             style={{ width: '100%',borderRadius:20 }}
           />
           </Modal>
-            <div className="work-times">
+            <div >
               {workTimes.map((work, index) => (
-                <div key={work.id}>
+                <div key={work.id} className="work-times">
                   <h3 style={{margin:'0 0 0 10px'}}>{work.title}</h3>
                   <div style={{display:'flex', flexDirection:'row'}}>
                     <p style={{display:'flex', flexDirection:'row', justifyContent:'flex-start', width:'50%', margin:'0 0 0 10px', fontSize:10}}>{work.workedFullName}</p>
