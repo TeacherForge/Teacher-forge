@@ -134,12 +134,15 @@ const TestsPagePsychologist = () => {
   },  [searchText]);
 
   const onFinish = (values) => {
+    const { sendAll, ...otherValues } = values;
     const testData = {
-      ...values,
-      teacherIds: selectedTeacherIds,
+      ...otherValues,
+      sendAll: !!sendAll,
+      teacherIds: sendAll ? [] : selectedTeacherIds,
     };
     handleSaveTest(testData);
   };
+  
   
   const onRowClick = (test) => {
     return {
@@ -202,7 +205,7 @@ const TestsPagePsychologist = () => {
             <Form.Item name="description"  rules={[{ required: true }]} >
               <Input.TextArea placeholder="Description" style={{borderRadius:15}}/>
             </Form.Item>
-            <Form.Item name="sendAll" valuePropName="sendAll">
+            <Form.Item name="sendAll" valuePropName="checked">
               <Checkbox>Send to all teachers in that school</Checkbox>
             </Form.Item>
             <Form.Item name="teacherIds">

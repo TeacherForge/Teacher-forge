@@ -12,16 +12,15 @@ const StudentTable = ({open}) => {
 
     const navigate = useNavigate();
 
-    const handleDel = async (record) => {
-        await TeacherService.delUser(id,record.id).then(() => {
-            getTeachersInfo();
-        }).catch((error) => {
-            notification.error({
-                message: error
-            })
-        });
+    const handleDel = async (record) => {   
+        await StudentService.delStudents(record.id).then(() => { 
+            getTeachersInfo();    
+        }).catch((error) => { 
+        notification.error({            
+            message: error 
+        })    
+        }); 
     }
-
 
 
     const columns = [

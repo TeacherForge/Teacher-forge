@@ -33,7 +33,7 @@ const AppealsPage = () => {
             readValue = true;
         } else if (newFilter === 'unread') {
             readValue = false;
-        } else {
+        } else{
             readValue = undefined; 
         }
 

@@ -34,6 +34,11 @@ class StudentService {
             headers: { Authorization: `Bearer ${accessToken}`}
         });
     }
+    delStudents(userId){    
+        const accessToken = localStorage.getItem('accessToken');
+        return axios.delete(Base_URL + `/admin/students/${userId}`, {        
+        headers: { Authorization: `Bearer ${accessToken}`}
+        })};
 
 }
 

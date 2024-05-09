@@ -24,7 +24,7 @@ class PsychologyService{
 
     delPsychology(schoolId,userId){
         const accessToken = localStorage.getItem('accessToken');
-        return axios.get(Base_URL + `/admin/schools/${schoolId}/users/${userId}`, {
+        return axios.delete(Base_URL + `/admin/schools/${schoolId}/users/${userId}`, {
             headers: { Authorization: `Bearer ${accessToken}`}
         })
     };

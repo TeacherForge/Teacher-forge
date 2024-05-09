@@ -11,6 +11,7 @@ import '../students/EachStudentPagePsychologist.css'
 import axios from 'axios';
 import {Base_URL} from "../../../constant";
 import { useNavigate } from 'react-router-dom';
+import {downloadFile}  from '../../../services/DownLoadFileService'
 
 
 const EachStudentPagePsychologist = () => {
@@ -27,6 +28,7 @@ const EachStudentPagePsychologist = () => {
     const [sortField, setSortField] = useState('createdTime');
     const [sortOrder, setSortOrder] = useState('ascend');
     const pageSize = 10;
+    const [photo, setPhoto] = useState();
 
     const onChange = (key) => {
         setKey(key);
@@ -42,20 +44,30 @@ const EachStudentPagePsychologist = () => {
 
     const getStudentInfo = async () => {
         setLoading(true);
-        await StudentServicePsychologist.getEachStudent(studentId).then((r) => {
-            if (r.data) {
-                setData(r.data)
+        try {
+            const r = await StudentServicePsychologist.getEachStudent(studentId);
+            setData(r.data);
+            if (r.data && r.data.photoId) {
+                const fileResult = await downloadFile(r.data.photoId);
+                if (fileResult && fileResult.isImage) {
+                    setPhoto(fileResult.downloadUrl);
+                } else {
+                    notification.error({
+                        message: 'File is not an image'
+                    });
+                }
             }
-        }).catch(err => {
+        } catch (err) {
             notification.error({
                 message: err.message
-            })
-        }).finally(() => {
+            });
+        } finally {
             setLoading(false);
-        })
-    }
-
+        }
+    };
     
+    
+
 
     const handleSavePsychologist = async () => {
         const values = formPsychology.getFieldsValue();
@@ -180,9 +192,7 @@ const EachStudentPagePsychologist = () => {
                 <Spin spinning={loading}>
                     <Row gutter={[16, 16]}>
                         <Col xs={8}>
-                            <Image
-                                src={'https://v1.spb.ru/gallery/foto-na-dokumenty/20150512/3,5_4,5.jpg'}
-                                style={{width: '250px', height: '320px'}}/>
+                        <Image src={photo} style={{width: '250px', height: '320px'}}/>
                         </Col>
 
                         <Col xs={12}>
