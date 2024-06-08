@@ -27,8 +27,6 @@ const CreateTestPage = () => {
   const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [photoUrls, setPhotoUrls] = useState([]);
 
-
-
   useEffect(() => {
     const fetchQuestions = async () => {
       try {

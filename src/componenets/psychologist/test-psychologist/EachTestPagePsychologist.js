@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {Base_URL} from "../../../constant";
-import { useParams, useNavigate} from 'react-router-dom';
-import { Table, notification} from 'antd';
-import './CreateTestPagePsychologist.css'
+import { Base_URL } from "../../../constant";
+import { useParams, useNavigate } from 'react-router-dom';
+import { Table, notification } from 'antd';
+import './CreateTestPagePsychologist.css';
+
 const EachTestPagePsychologist = () => {
-  const {id, questionCount} = useParams();
-  const accessToken = localStorage.getItem('accessToken')
+  const { id, questionCount } = useParams();
+  const accessToken = localStorage.getItem('accessToken');
   const [testResults, setTestResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -15,8 +16,8 @@ const EachTestPagePsychologist = () => {
     const fetchTestResults = async () => {
       try {
         const response = await axios.get(`${Base_URL}/psychologist/tests/${id}`, {
-            headers: { Authorization: `Bearer ${accessToken}` }
-          });
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
         setTestResults(response.data.map((test, index) => ({ ...test, key: index })));
       } catch (error) {
         console.error('Ошибка при получении результатов теста:', error);
@@ -26,7 +27,7 @@ const EachTestPagePsychologist = () => {
     };
 
     fetchTestResults();
-  }, [id]);
+  }, [id, accessToken]);
 
   const columns = [
     {
@@ -44,27 +45,29 @@ const EachTestPagePsychologist = () => {
         </span>
       ),
     },
-];
+  ];
 
-
-
-const onRowClick = (test) => {
+  const onRowClick = (test) => {
     return {
       onClick: () => {
+        if (test.answered) {
           navigate(`/test-psychologist/${id}/teacher/${test.teacherId}/${questionCount}`);
+        } else {
+          notification.error({ message: 'This test has no answer' });
+        }
       },
     };
   };
 
   return (
-    <div style={{ padding: '100px 200px 20px 200px' }} className='create-test-container' >
-        <Table 
-      dataSource={testResults} 
-      columns={columns} 
-      onRow={onRowClick} 
-      loading={loading}
-      pagination={false}
-        />
+    <div style={{ padding: '100px 200px 20px 200px' }} className='create-test-container'>
+      <Table
+        dataSource={testResults}
+        columns={columns}
+        onRow={onRowClick}
+        loading={loading}
+        pagination={false}
+      />
     </div>
   );
 };
