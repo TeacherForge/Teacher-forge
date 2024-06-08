@@ -1,16 +1,16 @@
-import React, {useEffect, useState} from 'react';
-import {Table, Button, Row, Col, Input, Form, Typography, notification} from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Table, Button, Row, Col, Input, Form, Typography, notification } from 'antd';
 import './index.css';
 import { useForm } from 'antd/es/form/Form';
-import {CloseOutlined, ContainerOutlined} from '@ant-design/icons';
+import { CloseOutlined, ContainerOutlined } from '@ant-design/icons';
 import TeacherService from "../../../../services/TeacherService";
-import {useParams} from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-const TeachersTable = ({open}) => {
+const TeachersTable = ({ open }) => {
     const { id } = useParams();
 
     const [expandedRowKeys, setExpandedRowKeys] = useState([]);
-    const [data,setData] = useState([]);
+    const [data, setData] = useState([]);
     const [record, setRecord] = useState();
     const [position, setPosition] = useState();
     const [phoneNumber, setNumber] = useState();
@@ -26,57 +26,56 @@ const TeachersTable = ({open}) => {
         }
     };
 
-
-
-
     const handleSave = async () => {
         const values = form.getFieldsValue();
-            const json = {
-                ...values,
-                phoneNumber,
-                position,
-                category
-            };
-            Object.entries(json).forEach(([key, value]) => {
-                if (value === undefined) {
-                    delete json[key];
-                }
-            });
+        const json = {
+            ...values,
+            phoneNumber,
+            position,
+            category
+        };
+        Object.entries(json).forEach(([key, value]) => {
+            if (value === undefined) {
+                delete json[key];
+            }
+        });
 
-            await TeacherService.updateTeachers(id, json).then(() => {
-                getTeachersInfo();
-            }).catch((e) => {
-                notification.error({
-                    message: e
-                })
+        console.log("Saving teacher with ID:", teacherId);
+        try {
+            await TeacherService.updateTeachers(id, teacherId, json);
+            getTeachersInfo();
+            notification.success({
+                message: "Teacher updated successfully"
             });
+        } catch (e) {
+            notification.error({
+                message: e.response?.data?.message || e.message
+            });
+        }
     };
-
-    const expandedRowRender = (record) => (
-        <div style={{ margin: 0 }}>{record.extra}</div>
-    );
 
     useEffect(() => {
         if (record) {
             form.setFieldsValue({
-                userName:record?.userName,
+                userName: record?.userName,
                 lastName: record?.lastName,
                 middleName: record?.middleName,
                 newPassword: record?.password,
-                repeatPassword:record?.password,
-            })
+                repeatPassword: record?.password,
+            });
+            console.log("Set record:", record);
         }
-    },[record])
+    }, [record]);
 
-    const handleChange = (type,value) => {
-         if (type==='position') {
-             setPosition(value)
-         } else if (type==='phoneNumber') {
-             setNumber(value)
-         } else if (type==='category') {
-             setCategory(value)
-         }
-    }
+    const handleChange = (type, value) => {
+        if (type === 'position') {
+            setPosition(value);
+        } else if (type === 'phoneNumber') {
+            setNumber(value);
+        } else if (type === 'category') {
+            setCategory(value);
+        }
+    };
 
     const extraform = () => {
         return (
@@ -113,7 +112,7 @@ const TeachersTable = ({open}) => {
                     <Button style={{ borderRadius: '20px', width: '50px', position: 'absolute', right: 0 }} onClick={() => handleExpand()}>
                         <Typography.Text style={{ fontSize: '15px' }}><CloseOutlined /></Typography.Text>
                     </Button>
-                    <Button type={'primary'} style={{ borderRadius: '20px', width: '130px', position: 'absolute', bottom: 0, right: 0 }} onClick={() =>handleSave()}>
+                    <Button type={'primary'} style={{ borderRadius: '20px', width: '130px', position: 'absolute', bottom: 0, right: 0 }} onClick={() => handleSave()}>
                         <Typography.Text style={{ fontSize: '15px', color: 'white' }}><b><ContainerOutlined /> &nbsp; Save</b></Typography.Text>
                     </Button>
                 </Col>
@@ -122,15 +121,18 @@ const TeachersTable = ({open}) => {
     };
 
     const handleDel = async (record) => {
-        await TeacherService.delUser(id,record.id).then(() => {
+        try {
+            await TeacherService.delUser(id, record.id);
             getTeachersInfo();
-        }).catch((error) => {
+            notification.success({
+                message: "Teacher deleted successfully"
+            });
+        } catch (error) {
             notification.error({
-                message: error
-            })
-        });
-    }
-
+                message: error.response?.data?.message || error.message
+            });
+        }
+    };
 
     const columns = [
         {
@@ -139,9 +141,9 @@ const TeachersTable = ({open}) => {
             key: 'fullName',
             className: 'full-name-column',
             render: (text, record) => {
-               return <>
-                   {record.userName + ' ' + record.middleName + ' ' + record.lastName}
-               </>
+                return <>
+                    {record.userName + ' ' + record.middleName + ' ' + record.lastName}
+                </>
             },
         },
         {
@@ -151,7 +153,7 @@ const TeachersTable = ({open}) => {
             className: 'position-column',
             render: (text, record) => {
                 if (record.key === expandedRowKeys[0]) {
-                    return <Input defaultValue={text} onChange={(e) => handleChange('position',e.target.value)} />;
+                    return <Input defaultValue={text} onChange={(e) => handleChange('position', e.target.value)} />;
                 } else {
                     return text;
                 }
@@ -167,9 +169,9 @@ const TeachersTable = ({open}) => {
             dataIndex: 'phoneNumber',
             key: 'phoneNumber',
             render: (text, record) => {
-                if (text!==null){
+                if (text !== null) {
                     if (record.key === expandedRowKeys[0]) {
-                        return <Input defaultValue={text} onChange={(e) => handleChange('phoneNumber',e.target.value)} />;
+                        return <Input defaultValue={text} onChange={(e) => handleChange('phoneNumber', e.target.value)} />;
                     } else {
                         return text;
                     }
@@ -181,9 +183,9 @@ const TeachersTable = ({open}) => {
             dataIndex: 'category',
             key: 'category',
             render: (text, record) => {
-                if(text!==null) {
+                if (text !== null) {
                     if (record.key === expandedRowKeys[0]) {
-                        return <Input defaultValue={text} onChange={(e) => handleChange('category',e.target.value)} />;
+                        return <Input defaultValue={text} onChange={(e) => handleChange('category', e.target.value)} />;
                     } else {
                         return text;
                     }
@@ -198,8 +200,9 @@ const TeachersTable = ({open}) => {
                     <Col>
                         <Button type={"link"} onClick={() => {
                             setTeacherID(record.key);
-                            handleExpand(record.key);
                             setRecord(record);
+                            handleExpand(record.key);
+                            console.log("Editing teacher with ID:", record.key);
                         }}>
                             Edit
                         </Button>
@@ -215,23 +218,29 @@ const TeachersTable = ({open}) => {
     ];
 
     useEffect(() => {
-    getTeachersInfo();
-    },[open]);
+        getTeachersInfo();
+    }, [open]);
 
     const getTeachersInfo = async () => {
-        await TeacherService.getTeachers(id).then((res) => {
+        try {
+            const res = await TeacherService.getTeachers(id);
             const updatedDataSource = res.data.map(item => ({
                 ...item,
                 key: item.id,
                 extra: extraform(),
             }));
             setData(updatedDataSource);
-        })
-    }
+        } catch (error) {
+            notification.error({
+                message: error.response?.data?.message || error.message
+            });
+        }
+    };
+
+    const expandedRowRender = () => extraform();
 
     return (
         <Table
-
             dataSource={data}
             columns={columns}
             expandedRowRender={expandedRowRender}

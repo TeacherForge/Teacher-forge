@@ -97,7 +97,6 @@ const SchoolsPage = () => {
         setStatusFilter(null);
         setSearch(null);
         listSchools();
-        setSearch(null);
     };
     
 
@@ -161,16 +160,15 @@ const SchoolsPage = () => {
                                     {isOpen ? <CaretDownOutlined/> : <CaretRightOutlined/>}
                                 </div>
                                 {isOpen && (
-                                    <Radio.Group>
-                                        <Space direction="vertical" style={{marginLeft:'18px'}}>
-                                            {
-                                                dataRegion.map((item) => (
-                                                    <Radio value={item.id} onChange={(e) => {setRegionId(e.target.value)}}>{item.name}</Radio>
-                                                ))
-                                            }
+                                    <Radio.Group onChange={(e) => setRegionId(e.target.value)} value={regionId}>
+                                        <Space direction="vertical" style={{ marginLeft: '18px' }}>
+                                            {dataRegion.map((item) => (
+                                                <Radio key={item.id} value={item.id}>{item.name}</Radio>
+                                            ))}
                                         </Space>
                                     </Radio.Group>
                                 )}
+
                             </div>
                             <hr style={{color:'#F0F8FF'}} />
                             <div>
@@ -179,12 +177,13 @@ const SchoolsPage = () => {
                                     {isOpenTypes ? <CaretDownOutlined/> : <CaretRightOutlined/>}
                                 </div>
                                 {isOpenTypes && (
-                                    <Radio.Group onChange={(e) => setTypeFilter(e.target.value)}>
-                                    {jsonTypes.map((item) => (
-                                        <Radio value={item.value}>{item.name}</Radio>
-                                    ))}
+                                    <Radio.Group onChange={(e) => setTypeFilter(e.target.value)} value={typeFilter}>
+                                        {jsonTypes.map((item) => (
+                                            <Radio key={item.value} value={item.value}>{item.name}</Radio>
+                                        ))}
                                     </Radio.Group>
                                 )}
+
                             </div>
                             <hr style={{color:'#F0F8FF'}} />
                             <div>
@@ -193,12 +192,13 @@ const SchoolsPage = () => {
                                     {isOpenStatus ? <CaretDownOutlined/> : <CaretRightOutlined/>}
                                 </div>
                                 {isOpenStatus && (
-                                    <Radio.Group onChange={(e) => setStatusFilter(e.target.value)}>
-                                    {jsonStatus.map((item) => (
-                                        <Radio value={item.value}>{item.name}</Radio>
-                                    ))}
+                                    <Radio.Group onChange={(e) => setStatusFilter(e.target.value)} value={statusFilter}>
+                                        {jsonStatus.map((item) => (
+                                            <Radio key={item.value} value={item.value}>{item.name}</Radio>
+                                        ))}
                                     </Radio.Group>
                                 )}
+
                             </div>
                         </div>
                     </Card>

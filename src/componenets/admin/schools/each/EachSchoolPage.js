@@ -50,8 +50,7 @@ const EachSchoolPage = () => {
             address: address,
             status: status,
             type: type,
-            name: name,
-            domain: domain
+            name: name
         };
         await SchoolsService.updateSchools(id, data);
         setIsEdit(false);
@@ -132,12 +131,6 @@ const EachSchoolPage = () => {
                         </Col>
                         <Col xs={20}>
                             {
-                                isEdit
-                                    ?
-                                    <Typography.Text>
-                                        <Input defaultValue={info?.domain} onChange={(e) => setDomain(e.target.value)}/>
-                                    </Typography.Text>
-                                    :
                             <Typography.Text style={{fontSize: '15px'}}>{info?.domain}</Typography.Text>
                             }
                         </Col>
