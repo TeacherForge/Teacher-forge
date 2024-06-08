@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
-import {Base_URL} from "../../../constant";
+import { Base_URL } from "../../../constant";
 import { useParams, useNavigate } from 'react-router-dom';
 import { List, Form, Button, Input, Radio, Checkbox, Card, notification } from 'antd';
-import '../../psychologist/test-psychologist/CreateTestPagePsychologist.css'
-import {downloadFile}  from '../../../services/DownLoadFileService'
+import '../../psychologist/test-psychologist/CreateTestPagePsychologist.css';
+import { downloadFile } from '../../../services/DownLoadFileService';
 
 const EachTestPageTeacher = () => {
-  const accessToken = localStorage.getItem('accessToken')
+  const accessToken = localStorage.getItem('accessToken');
   const { id, questionCount } = useParams();
   const navigate = useNavigate();
   const [currentQuestion, setCurrentQuestion] = useState(1);
@@ -22,14 +22,14 @@ const EachTestPageTeacher = () => {
     const fetchQuestionData = async (num) => {
       try {
         const response = await axios.get(`${Base_URL}/client/tests/${id}/questions/${num}`, {
-            headers: { Authorization: `Bearer ${accessToken}` }
-          });
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
         setQuestionsData(prev => ({ ...prev, [num]: response.data }));
         if (response.data.details.photoIds && response.data.details.photoIds.length > 0) {
-            fetchPhotoUrls(response.data.details.photoIds);
-          } else {
-            setPhotoUrls([]); 
-          }
+          fetchPhotoUrls(response.data.details.photoIds);
+        } else {
+          setPhotoUrls([]);
+        }
       } catch (error) {
         notification.error({ message: 'Failed to load question data.' });
       }
@@ -64,11 +64,9 @@ const EachTestPageTeacher = () => {
       });
 
       notification.success({ message: 'Response saved!' });
-  
+
       if (questionNum < questionCount) {
         setCurrentQuestion(questionNum + 1);
-      } else {
-
       }
     } catch (error) {
       notification.error({ message: 'Failed to save response.' });
@@ -77,9 +75,7 @@ const EachTestPageTeacher = () => {
     }
   };
 
-
   const finishTest = async () => {
-
     setSubmitting(true);
     try {
       await submitResponse(questionNumber);
@@ -101,12 +97,10 @@ const EachTestPageTeacher = () => {
       setSubmitting(false);
     }
   };
-  
-
 
   const onAnswerChange = (e, questionType) => {
     let answerValue;
-    
+
     if (questionType === 'MULTIPLE_CHOICE') {
       answerValue = e;
     } else if (questionType === 'SINGLE_CHOICE') {
@@ -114,20 +108,20 @@ const EachTestPageTeacher = () => {
     } else {
       answerValue = [e.target.value];
     }
-  
+
     setResponses({ ...responses, [currentQuestion]: answerValue });
   };
 
   const questionComponents = {
     OPEN: (data) => (
       <Input.TextArea
-        value={responses[currentQuestion]}
+        value={responses[currentQuestion]?.[0] || ''}
         onChange={(e) => onAnswerChange(e, 'OPEN')}
       />
     ),
     SINGLE_CHOICE: (data) => (
       <Radio.Group
-        value={responses[currentQuestion]}
+        value={responses[currentQuestion]?.[0]}
         onChange={(e) => onAnswerChange(e, 'SINGLE_CHOICE')}
       >
         {data.map((answer, index) => (
@@ -148,10 +142,10 @@ const EachTestPageTeacher = () => {
   };
 
   return (
-    <div className="test-container" style={{display:'flex', flexDirection:'row', justifyContent:'center', width:'100%'}}>
-      <div className="questions-list" style={{display:'flex', flexDirection:'column', width:'200px',height:500, backgroundColor:'white', padding:20, borderRadius:20,margin:'20px 20px 20px 0'}}>
+    <div className="test-container" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
+      <div className="questions-list" style={{ display: 'flex', flexDirection: 'column', width: '200px', height: 500, backgroundColor: 'white', padding: 20, borderRadius: 20, margin: '20px 20px 20px 0' }}>
         <List
-        style={{display:'flex', flexDirection:'column', width:'200px',height:500, backgroundColor:'white', padding:20, borderRadius:20, overflowY:'scroll'}}
+          style={{ display: 'flex', flexDirection: 'column', width: '200px', height: 500, backgroundColor: 'white', padding: 20, borderRadius: 20, overflowY: 'scroll' }}
           dataSource={Array.from({ length: questionCount }, (_, i) => `Question №${i + 1}`)}
           renderItem={(item, index) => (
             <List.Item
@@ -163,7 +157,7 @@ const EachTestPageTeacher = () => {
           )}
         />
       </div>
-      <div className="question-display" style={{display:'flex', flexDirection:'column', width:'800px',height:500, backgroundColor:'white', padding:20, borderRadius:20,margin:'20px 20px 20px 0'}}>
+      <div className="question-display" style={{ display: 'flex', flexDirection: 'column', width: '800px', height: 500, backgroundColor: 'white', padding: 20, borderRadius: 20, margin: '20px 20px 20px 0' }}>
         {questionsData[currentQuestion] && (
           <Card>
             <div className="question-content">
@@ -171,39 +165,37 @@ const EachTestPageTeacher = () => {
               <h3>{questionsData[currentQuestion].details.question}</h3>
               <div>
                 {photoUrls.map((url, index) => (
-                    <img key={index} src={url} alt="Attached" style={{ width: '100px', height: '100px' }} />
+                  <img key={index} src={url} alt="Attached" style={{ width: '100px', height: '100px' }} />
                 ))}
-            </div>
-              <div style={{display:'flex', flexDirection:'column'}}>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
                 {questionComponents[questionsData[currentQuestion].questionType](
-                    questionsData[currentQuestion].details.answers 
+                  questionsData[currentQuestion].details.answers
                 )}
               </div>
-
             </div>
-            <div className="submit-area" style={{display:'flex', flexDirection:'row', justifyContent:'flex-end'}}>
-          {currentQuestion < questionNumber && (
-            <Button
-              type="primary"
-              onClick={() => submitResponse(currentQuestion)}
-              disabled={submitting}
-              style={{backgroundColor:'#48B813', marginTop:20}}
-            >
-              Save Answer
-            </Button>
-          )}
-          {/* The Finish Test button will appear only if we are on the last question */}
-          {currentQuestion === questionNumber && (
-            <Button
-              type="primary"
-              onClick={finishTest}
-              disabled={submitting || Object.keys(responses).length < questionNumber}
-              style={{backgroundColor:'#64B5D7', color:'white',marginTop:20}}
-            >
-              Finish Test
-            </Button>
-          )}
-        </div>
+            <div className="submit-area" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+              {currentQuestion < questionNumber && (
+                <Button
+                  type="primary"
+                  onClick={() => submitResponse(currentQuestion)}
+                  disabled={submitting}
+                  style={{ backgroundColor: '#48B813', marginTop: 20 }}
+                >
+                  Save Answer
+                </Button>
+              )}
+              {currentQuestion === questionNumber && (
+                <Button
+                  type="primary"
+                  onClick={finishTest}
+                  disabled={submitting || Object.keys(responses).length < questionNumber}
+                  style={{ backgroundColor: '#64B5D7', color: 'white', marginTop: 20 }}
+                >
+                  Finish Test
+                </Button>
+              )}
+            </div>
           </Card>
         )}
       </div>

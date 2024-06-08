@@ -138,7 +138,7 @@ const TestsPagePsychologist = () => {
     const testData = {
       ...otherValues,
       sendAll: !!sendAll,
-      teacherIds: sendAll ? [] : selectedTeacherIds,
+      teacherIds: selectedTeacherIds,
     };
     handleSaveTest(testData);
   };

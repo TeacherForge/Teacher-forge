@@ -70,20 +70,23 @@ const CreateTestPage = () => {
   };
   
 
+
   const editQuestion = (question) => {
+    form.resetFields();
     setSelectedQuestion(question);
     setNumberOfQuestion(question.number);
+    setQuestionType(question.questionType);
     form.setFieldsValue({
-      questionType: question.questionType,
-      question: question.details.question,
-      answers: question.details.answers?.map(answer => ({ answer })),
+        questionType: question.questionType,
+        question: question.details.question,
+        answers: question.details.answers?.map(answer => ({ answer })),
     });
     if (question.details.photoIds && question.details.photoIds.length > 0) {
-      fetchPhotoUrls(question.details.photoIds);
+        fetchPhotoUrls(question.details.photoIds);
     } else {
-      setPhotoUrls([]); 
+        setPhotoUrls([]);
     }
-  };
+};
   
 
   
@@ -91,7 +94,8 @@ const CreateTestPage = () => {
     form.resetFields();
     setSelectedQuestion(null);
     setNumberOfQuestion(questions.length + 1);
-  };
+    setQuestionType(null);
+};
 
   const finishTest = async () => {
     try {
