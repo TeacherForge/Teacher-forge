@@ -12,16 +12,7 @@ const AddGuardiansModal = ({isOpen, onClose,data}) => {
     const handleClick = async () => {
         const values = form.getFieldsValue();
 
-        const object = {
-            ...data,
-            additionalProperties: {
-                ...data.additionalProperties,
-                institutions: [
-                    ...data.additionalProperties.institutions,
-                    values
-                ]
-            }
-        };
+        const object = data.additionalProperties?.institutions!== null ? {...data, additionalProperties: {...data.additionalProperties,institutions: [...data.additionalProperties?.institutions, values]}} : {...data, additionalProperties: {...data.additionalProperties, institutions: [values]}};
         await StudentService.updateStudents(studentId, object)
             .catch((error) => {
                 notification.error({
